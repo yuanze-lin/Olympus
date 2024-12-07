@@ -15,7 +15,7 @@ Official implementation of "Text-Driven Image Editing via Learnable Regions"
 
 ## Method Overview
 
-![image](https://github.com/yuanze-lin/Olympus/blob/main/assets/framework.png)
+![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/framework.png)
 
 
 ## :loudspeaker:  News
