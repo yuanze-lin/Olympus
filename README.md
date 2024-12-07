@@ -26,7 +26,7 @@ Official implementation of "Text-Driven Image Editing via Learnable Regions"
 
 ## Suppored Capacities (Covering 20 tasks)
 
-![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/capacity.png)
+![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/capacities.png)
 
 
 ## Diverse Applications
