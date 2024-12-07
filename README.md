@@ -24,11 +24,6 @@ Official implementation of "Text-Driven Image Editing via Learnable Regions"
 - [To do] Release the inference code of Olympus (within 1 week).  
 - [2024.12.07] The Olympus model has been released on Hugging Face.
 
-## Contents
-
-- [Install](#install)
-- [Quick Start](#quick_start)
-
 
 ## Diverse Applications
 
