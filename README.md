@@ -1,4 +1,4 @@
-# <img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="icon" width="20" height="20" style="vertical-align:middle; margin-right:5px;" /> Olympus: A Universal Task Router for Computer Vision Tasks <br /> 
+# <img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="icon" width="40" height="40" style="vertical-align:middle; margin-right:5px;" /> Olympus: A Universal Task Router for Computer Vision Tasks <br /> 
 **:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
 
 [![PDF](https://img.shields.io/badge/PDF-Download-orange?style=flat-square&logo=adobeacrobatreader&logoColor=white)](https://openaccess.thecvf.com/content/CVPR2024/papers/Lin_Text-Driven_Image_Editing_via_Learnable_Regions_CVPR_2024_paper.pdf)
