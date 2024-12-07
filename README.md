@@ -28,3 +28,8 @@ Official implementation of "Text-Driven Image Editing via Learnable Regions"
 
 - [Install](#install)
 - [Quick Start](#quick_start)
+
+
+## Diverse Applications
+
+![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/application.png)
