@@ -14,7 +14,7 @@ Official implementation of "Text-Driven Image Editing via Learnable Regions"
 > Abstract: We introduce Olympus, a new approach that transforms Multimodal Large Language Models (MLLMs) into a unified framework capable of handling a wide array of computer vision tasks. Utilizing a controller MLLM, Olympus delegates over 20 specialized tasks across images, videos, and 3D objects to dedicated modules. This instruction-based routing enables complex workflows through chained actions without the need for training heavy generative models. Olympus easily integrates with existing MLLMs, expanding their capabilities with comparable performance. Experimental results demonstrate that Olympus achieves an average routing accuracy of 94.75% across 20 tasks and precision of 91.82% in chained action scenarios, showcasing its effectiveness as a universal task router that can solve a diverse range of computer vision tasks.
 
 
-## :loudspeaker: News
+## :loudspeaker:  News
 
 - [2024.12.16] Release the inference code of Olympus.  
 - [2024.12.07] The Olympus model has been released on Hugging Face.
