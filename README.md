@@ -14,7 +14,7 @@ Official implementation of "Olympus: A Universal Task Router for Computer Vision
 ## :loudspeaker:  News
 - [To do] Release the training code.
 - [To do] Release the Olympus-Instruct and Olympus-Bench.
-- [To do] Release the inference code of Olympus (within 1 week).  
+- [To do] Release the inference code of Olympus (within 1 week).    
 - [2024.12.07] The Olympus model has been released on Hugging Face.
 
 ## :page_facing_up: Abstract
