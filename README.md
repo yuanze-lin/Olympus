@@ -1,5 +1,5 @@
 # <img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="icon" width="40" height="40" style="vertical-align:middle; margin-right:5px;" /> Olympus: A Universal Task Router for Computer Vision Tasks <br /> 
-**:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
+
 
 [![PDF](https://img.shields.io/badge/PDF-Download-orange?style=flat-square&logo=adobeacrobatreader&logoColor=white)](https://arxiv.org/pdf/2412.09612)
 [![arXiv](https://img.shields.io/badge/arXiv-2412.09612-b31b1b.svg)](https://arxiv.org/pdf/2412.09612) 
@@ -7,6 +7,7 @@
 [![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/Yuanze/Olympus)
 
 Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks" 
+**:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
 
 ## :loudspeaker:  News
 - [ ] Release the training code.
