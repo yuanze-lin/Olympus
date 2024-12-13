@@ -7,6 +7,7 @@
 [![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/Yuanze/Olympus)
 
 Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks" 
+
 **:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
 
 ## :loudspeaker:  News
