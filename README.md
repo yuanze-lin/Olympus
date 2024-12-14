@@ -11,7 +11,7 @@ Official implementation of "Olympus: A Universal Task Router for Computer Vision
 
 **:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
 
-## :loudspeaker:  News
+## :mega:  News
 - [ ] Release the training code.
 - [ ] Release Olympus datasets.
 - [ ] Release the inference code of Olympus.
