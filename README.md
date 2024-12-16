@@ -34,3 +34,16 @@ Official implementation of "Olympus: A Universal Task Router for Computer Vision
 ## :snowboarder: Diverse Applications
 
 ![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/application.png)
+
+## Citation
+
+If you find our work useful in your research or applications, please consider citing our paper using the following BibTeX:
+
+```
+@article{lin2024olympus,
+  title={Olympus: A Universal Task Router for Computer Vision Tasks},
+  author={Lin, Yuanze and Li, Yunsheng and Chen, Dongdong and Xu, Weijian and Clark, Ronald and Torr, Philip HS},
+  journal={arXiv preprint arXiv:2412.09612},
+  year={2024}
+}
+```
