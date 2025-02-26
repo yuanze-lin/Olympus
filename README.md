@@ -1,6 +1,6 @@
 <p align="center"><img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="icon" width="150" height="150" style="vertical-align:middle; margin-right:5px;" /></p>
 
-# Olympus: A Universal Task Router for Computer Vision Tasks <br /> 
+# Olympus: A Universal Task Router for Computer Vision Tasks (CVPR 2025) <br /> 
 
 [![PDF](https://img.shields.io/badge/PDF-Download-orange?style=flat-square&logo=adobeacrobatreader&logoColor=white)](https://arxiv.org/pdf/2412.09612)
 [![arXiv](https://img.shields.io/badge/arXiv-2412.09612-b31b1b.svg)](https://arxiv.org/pdf/2412.09612) 
