@@ -9,9 +9,7 @@
 
 Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks" 
 
-**:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
-
-Due to scheduling conflicts with other projects, we will release the code by the end of this month.
+**Due to scheduling conflicts with other projects, we will release the code by the end of this month.**
 
 ## :mega:  News
 - [ ] Release the training code.
