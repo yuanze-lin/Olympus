@@ -100,8 +100,8 @@ Next, would it be possible to change the cat's color to white? This change will 
 In the following step, produce a high-resolution 3D model based on the modified image.
 At the next point, please show a video of a cat and a dog running on a playground.
 
-Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight
-streaming through the glass and casting soft shadows to create a cozy atmosphere.</image_gen>
+Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight streaming
+through the glass and casting soft shadows to create a cozy atmosphere.</image_gen>
 <image_edit>change the cat's color to white.</image_edit>
 <3D_gen_image>produce a high-resolution 3D model based on the modified image.</3D_gen_image>
 <video_gen>a cat and a dog running on a playground.</video_gen>
