@@ -26,6 +26,83 @@ Official implementation of "Olympus: A Universal Task Router for Computer Vision
 
 ![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/overview.png)
 
+  
+## Getting Started
+
+### :hammer_and_wrench: Environment Installation <a href="#install" id="install"/>
+To establish the environment, just run this code in the shell:
+```
+git clone https://github.com/yuanze-lin/Olympus.git
+cd Olympus
+conda create -n olympus python==3.10 -y
+source activate olympus
+pip install -r requirements.txt
+```
+That will create the environment ```olympus``` we used.
+
+### Download Models & Data ###
+Our collected Olympus data is shared as:
+
+| Data    | Link |
+|---------|------|
+| All Olympus Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
+| Olympus Fine-tuning Data | [Olympus.json](https://drive.google.com/file/d/1CMLZLa6hkVN2K1ebCcJEOaFGc2cLeLQ7/view?usp=sharing) |
+
+```Olympus_20tasks_all```: There are 20 JSON files corresponding to different tasks. Each JSON includes both training and test data, along with the chain-of-action data in ```coa.json```.\
+```Olympus.json```: The final fine-tuning data.
+
+
+(1) Download the Olympus model:
+```
+python download_olympus.py
+```
+It will save the olympus model under the ```ckpts``` folder.
+
+(2) Download the Olympus data for fine-tuning:
+```
+python download_olympus_json.py
+```
+The json data will be saved as ```Olympus.json``` in the ```training_data``` folder. Note that ```Olympus.json``` includes ```llava_v1_5_mix665k.json``` combined with our collected data from 20 tasks.
+Please refer to the merge script ```scripts/merge_data.py```.
+(3) Download the Mipha-3B model for fine-tuning:
+```
+python download_mipha_3b.py
+```
+It will save the mipha-3b model under the ```ckpts``` folder.
+
+### Inference
+
+Run the following code for inference: 
+```
+model_name=Olympus
+MODELDIR=ckpts/$model_name
+
+python predict.py \
+  --prompt "Generate a image of a fluffy orange cat lounging on a windowsill, with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere. Then, add a dog sitting calmly near the cat" \
+  --model-path $MODELDIR \
+  --temperature 0 \
+  --conv-mode v0
+```
+or just run ```bash predict.sh``` we used.
+
+### Finetune 
+Please refer [here](https://github.com/haotian-liu/LLaVA/blob/9a26bd1435b4ac42c282757f2c16d34226575e96/README.md#visual-instruction-tuning) to prepare the instruction tuning data. Especially, store the images from different datasets under ```training_data``` folder.
+
+Run the following code to fine-tune the model: 
+```
+bash scripts/mipha/finetune.sh
+```
+
+### Evaluation
+To evaluate the model's performance on different benchmarks:
+
+See [Evaluation.md](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
+
+Please place the evaluation data under the ```eval``` folder. To test the model's performance, simply run:
+
+```
+bash scripts/mipha/eval/vqav2.sh
+```
 
 ## :crystal_ball: Suppored Capacities (Covering 20 tasks)
 
