@@ -46,7 +46,7 @@ We share our collected Olympus dataset as follows:
 | Olympus Task-wise Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
 | Olympus Fine-tuning Data | [Olympus.json](https://drive.google.com/file/d/1CMLZLa6hkVN2K1ebCcJEOaFGc2cLeLQ7/view?usp=sharing) |
 
-- ```Olympus_20tasks_all```: There are 20 JSON files corresponding to different tasks. Each JSON includes both training and test data, along with the chain-of-action data in ```coa.json```.\
+- ```Olympus_20tasks_all```: There are 20 JSON files corresponding to different tasks. Each JSON includes both training and test data, along with the chain-of-action data in ```coa.json```.
 - ```Olympus.json```: The final fine-tuning data.
 
 
