@@ -101,7 +101,8 @@ To evaluate the model's performance on different benchmarks:
 
 See [Evaluation.md](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
-Please place the evaluation data under the ```eval``` folder. To test the model's performance, simply run:
+Please place the evaluation data under the ```eval``` folder. The evaluation scripts are placed under ```scripts/mipha/eval/```.
+For example, to test the model's performance on VQAv2 dataset, simply run:
 
 ```
 bash scripts/mipha/eval/vqav2.sh
