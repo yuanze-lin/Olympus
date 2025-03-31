@@ -43,7 +43,7 @@ That will create the environment ```olympus``` we used.
 ### Download Models & Data ###
 We share our collected Olympus dataset as follows:
 
-| Data    | Link |
+| Instruction    | Link |
 |---------|------|
 | Olympus Task-wise Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
 | Olympus Fine-tuning Data | [Olympus.json](https://drive.google.com/file/d/1CMLZLa6hkVN2K1ebCcJEOaFGc2cLeLQ7/view?usp=sharing) |
