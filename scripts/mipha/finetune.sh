@@ -1,6 +1,6 @@
 #!/bin/bash
 model_dir=ckpts/Mipha-3B
-outputdir=ckpts/Olympus
+outputdir=ckpts/Olympus_2e_lr5e-5
 
 deepspeed --num_nodes=8 --num_gpus=8 --master_addr="$MASTER_ADDR" --master_port=29600 mipha/train/train.py \
     --deepspeed ./scripts/zero3.json \
