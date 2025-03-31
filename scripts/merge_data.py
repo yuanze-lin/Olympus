@@ -3,9 +3,9 @@ import pdb
 import os
 
 # llava_data
-x = json.load(open('llava_v1_5_mix665k.json'))
+x = json.load(open('jsons/llava_v1_5_mix665k.json'))
 
-json_path = '/data6/v-linyuanz/dataset/playground/train_data2/instruct_scripts/jsons'
+json_path = 'jsons'
 print(len(x))
 count = 0
 
