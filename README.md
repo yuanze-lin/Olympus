@@ -55,7 +55,7 @@ We share our collected Olympus dataset as follows:
 ```
 python download_olympus.py
 ```
-It will save the olympus model under the ```ckpts``` folder.
+It will save the ```Olympus``` model under the ```ckpts``` folder.
 
 (2) Download the Olympus data for fine-tuning:
 ```
@@ -68,7 +68,7 @@ Please refer to the merge script ```scripts/merge_data.py```.
 ```
 python download_mipha_3b.py
 ```
-It will save the mipha-3b model under the ```ckpts``` folder.
+It will save the ```Mipha-3B``` model under the ```ckpts``` folder.
 
 ### Inference
 
