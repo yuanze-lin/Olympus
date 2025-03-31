@@ -12,9 +12,10 @@ Official implementation of "Olympus: A Universal Task Router for Computer Vision
 **Due to scheduling conflicts with other projects, we will release the code within this month.**
 
 ## :mega:  News
-- [ ] Release the training code.
-- [ ] Release Olympus datasets.
-- [ ] Release the inference code of Olympus.
+- [] Release the code for integration with task-specific models.
+- [x] Release the training code.
+- [x] Release Olympus datasets.
+- [x] Release the inference code of Olympus.
 - [x] We've released the weights of Olympus.
 
 ## :page_facing_up: Abstract
