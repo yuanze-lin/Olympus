@@ -60,8 +60,8 @@ def predict(args):
     if outputs.endswith(stop_str):
         outputs = outputs[:-len(stop_str)]
     outputs = outputs.strip()
-    print('Input Prompt: ', args.prompt)
-    print('Output: ', outputs)
+    print('\nInput Prompt: ', args.prompt)
+    print('\nOutput: ', outputs)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
