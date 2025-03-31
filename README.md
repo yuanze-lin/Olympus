@@ -115,7 +115,7 @@ bash scripts/mipha/eval/vqav2.sh
 
 ## Citation
 
-If you find our work useful in your research or applications, please consider citing our paper using the following BibTeX:
+If you find Olympus useful for your research and applications, please cite using this BibTeX:
 
 ```
 @article{lin2024olympus,
@@ -125,3 +125,8 @@ If you find our work useful in your research or applications, please consider ci
   year={2024}
 }
 ```
+
+## Acknowledgement
+We build our project based on
+[Mipha](https://github.com/xmoanvaf/llava-phi): An impressive open-source project for lightweight vision-language assistants
+[LLaVA](https://github.com/haotian-liu/LLaVA): A powerful open-source vision-language assistant project
