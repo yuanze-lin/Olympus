@@ -130,7 +130,7 @@ If you find Olympus useful for your research and applications, please cite using
 ```
 
 ## Acknowledgement
-Our project is built upon the following projects:"
+Our project is built upon the following foundations:
 
 - [Mipha](https://github.com/xmoanvaf/llava-phi): An impressive open-source project for lightweight vision-language assistants
 - [LLaVA](https://github.com/haotian-liu/LLaVA): A powerful open-source vision-language assistant project
