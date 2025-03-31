@@ -82,7 +82,7 @@ python predict.py \
   --temperature 0 \
   --conv-mode v0
 ```
-or just run ```bash predict.sh``` we used.
+Alternatively, you can run ```bash predict.sh``` as we did. Change the ```--prompt``` to customize the input prompt as needed.
 
 ### Visual Instruction Tuning
 Please refer [here](https://github.com/haotian-liu/LLaVA/blob/9a26bd1435b4ac42c282757f2c16d34226575e96/README.md#visual-instruction-tuning) to prepare the instruction tuning data. Especially, store the images from different datasets under ```train_data``` folder.
