@@ -85,7 +85,7 @@ python predict.py \
 ```
 or just run ```bash predict.sh``` we used.
 
-### Finetune 
+### Visual Instruction Tuning
 Please refer [here](https://github.com/haotian-liu/LLaVA/blob/9a26bd1435b4ac42c282757f2c16d34226575e96/README.md#visual-instruction-tuning) to prepare the instruction tuning data. Especially, store the images from different datasets under ```train_data``` folder.
 
 Run the following code to fine-tune the model: 
