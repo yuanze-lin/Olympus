@@ -90,7 +90,15 @@ At the next point, please show a video of a cat and a dog running on a playgroun
   --temperature 0 \
   --conv-mode v0
 ```
-Alternatively, you can run ```bash predict.sh``` as we did. Change the ```--prompt``` to customize the input prompt as needed.
+Alternatively, you can run ```bash predict.sh``` as we did. 
+
+The prediction should be:
+```
+Input Prompt:  Generate an image of a fluffy orange cat lounging on a windowsill, with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere. Next, would it be possible to change the cat's color to white? This change will make it more eye-catching. In the following step, produce a high-resolution 3D model based on the modified image. At the next point, please show a video of a cat and a dog running on a playground.
+
+Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere.</image_gen><image_edit>change the cat's color to white.</image_edit><3D_gen_image>produce a high-resolution 3D model based on the modified image.</3D_gen_image><video_gen>a cat and a dog running on a playground.</video_gen>
+```
+Change the ```--prompt``` to customize the input prompt as needed.
 
 ### Visual Instruction Tuning
 Please refer [here](https://github.com/haotian-liu/LLaVA/blob/9a26bd1435b4ac42c282757f2c16d34226575e96/README.md#visual-instruction-tuning) to prepare the instruction tuning data. Especially, store the images from different datasets under ```train_data``` folder.
