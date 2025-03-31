@@ -35,17 +35,17 @@ To establish the environment, just run this code in the shell:
 git clone https://github.com/yuanze-lin/Olympus.git
 cd Olympus
 conda create -n olympus python==3.10 -y
-source activate olympus
+conda activate olympus
 pip install -r requirements.txt
 ```
 That will create the environment ```olympus``` we used.
 
 ### Download Models & Data ###
-Our collected Olympus data is shared as:
+We share our collected Olympus dataset as follows:
 
 | Data    | Link |
 |---------|------|
-| All Olympus Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
+| Olympus Task-wise Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
 | Olympus Fine-tuning Data | [Olympus.json](https://drive.google.com/file/d/1CMLZLa6hkVN2K1ebCcJEOaFGc2cLeLQ7/view?usp=sharing) |
 
 ```Olympus_20tasks_all```: There are 20 JSON files corresponding to different tasks. Each JSON includes both training and test data, along with the chain-of-action data in ```coa.json```.\
