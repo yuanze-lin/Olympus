@@ -61,7 +61,7 @@ It will save the ```Olympus``` model under the ```ckpts``` folder.
 python download_olympus_json.py
 ```
 The json data will be saved as ```Olympus.json``` in the ```train_data``` folder. Note that ```Olympus.json``` includes ```llava_v1_5_mix665k.json``` combined with our collected data from 20 tasks.
-**If you want to merge the data manually, firstly create ```jsons``` folder, download all the JSON files from [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) and [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/resolve/main/llava_v1_5_mix665k.json) into the ```jsons``` folder, then run the merge script by:**
+**If you want to merge the data manually, firstly create ```jsons``` folder, download all the JSON files from [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) and [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json)) into the ```jsons``` folder, then run the merge script by:**
 
 ```
 python scripts/merge_data.py
