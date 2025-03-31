@@ -92,11 +92,19 @@ At the next point, please show a video of a cat and a dog running on a playgroun
 ```
 Alternatively, you can run ```bash predict.sh``` as we did. 
 
-The prediction should be:
+The prediction should be like:
 ```
-Input Prompt:  Generate an image of a fluffy orange cat lounging on a windowsill, with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere. Next, would it be possible to change the cat's color to white? This change will make it more eye-catching. In the following step, produce a high-resolution 3D model based on the modified image. At the next point, please show a video of a cat and a dog running on a playground.
+Input Prompt:  Generate an image of a fluffy orange cat lounging on a windowsill,
+with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere.
+Next, would it be possible to change the cat's color to white? This change will make it more eye-catching.
+In the following step, produce a high-resolution 3D model based on the modified image.
+At the next point, please show a video of a cat and a dog running on a playground.
 
-Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere.</image_gen><image_edit>change the cat's color to white.</image_edit><3D_gen_image>produce a high-resolution 3D model based on the modified image.</3D_gen_image><video_gen>a cat and a dog running on a playground.</video_gen>
+Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight
+streaming through the glass and casting soft shadows to create a cozy atmosphere.</image_gen>
+<image_edit>change the cat's color to white.</image_edit>
+<3D_gen_image>produce a high-resolution 3D model based on the modified image.</3D_gen_image>
+<video_gen>a cat and a dog running on a playground.</video_gen>
 ```
 Change the ```--prompt``` to customize the input prompt as needed.
 
