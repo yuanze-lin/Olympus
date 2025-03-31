@@ -64,6 +64,7 @@ python download_olympus_json.py
 ```
 The json data will be saved as ```Olympus.json``` in the ```training_data``` folder. Note that ```Olympus.json``` includes ```llava_v1_5_mix665k.json``` combined with our collected data from 20 tasks.
 Please refer to the merge script ```scripts/merge_data.py```.
+
 (3) Download the Mipha-3B model for fine-tuning:
 ```
 python download_mipha_3b.py
