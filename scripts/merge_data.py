@@ -2,6 +2,17 @@ import json
 import pdb
 import os
 
+# remove elements from OlympusBench
+def remove_ele_from_eval(name, json_list):
+    new_list = []
+
+    for i in range(len(json_list)):
+        index = name.split('.json')[0]+str(i)
+        if index not in eval_list:
+            new_list.append(json_list[i])
+            
+    return new_list
+    
 # llava_data
 x = json.load(open('jsons/llava_v1_5_mix665k.json'))
 
@@ -17,17 +28,7 @@ for eval_item in eval_json:
     for key, value in eval_item.items():
         eval_list.append(value[2])
 
-def remove_ele_from_eval(name, json_list):
-    new_list = []
-
-    for i in range(len(json_list)):
-        index = name.split('.json')[0]+str(i)
-        if index not in eval_list:
-            new_list.append(json_list[i])
-            
-    return new_list
     
-x = []
 files = os.listdir(json_path)
 # merge different tasks
 for json_file in files:
