@@ -31,7 +31,7 @@ for eval_item in eval_json:
 
     
 files = os.listdir(json_path)
-# merge different tasks
+# Merge different tasks
 for json_file in files:
     if not json_file.endswith('.json') or json_file == 'eval.json':
         continue
