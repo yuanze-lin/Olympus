@@ -1,5 +1,4 @@
 import json
-import pdb
 import os
 
 # Load LLaVA instruction data
