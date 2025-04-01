@@ -65,6 +65,7 @@ The json data will be saved as ```Olympus.json``` in the ```train_data``` folder
 ```
 python scripts/merge_data.py
 ```
+You can specify which tasks to merge by referring to the script ```scripts/merge_tasks.py```.
 
 (3) Download the Mipha-3B model for fine-tuning:
 ```
