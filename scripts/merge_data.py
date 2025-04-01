@@ -18,5 +18,6 @@ merged_data = llava_data + olympus_data
 output_path = 'jsons/Olympus.json'
 with open(output_path, 'w') as f:
     json.dump(merged_data, f, indent=2)
+f.close()
 
 print(f"Merged dataset saved to {output_path} with {len(merged_data)} total entries.")
