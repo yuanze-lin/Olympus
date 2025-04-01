@@ -50,6 +50,7 @@ print(f"Merged task count: {task_count}")
 print(f"Final dataset size: {len(base_data)}")
 
 # Save the merged dataset
-output_path = 'jsons/Olympus.json'
+output_path = 'jsons/Olympus_specified_tasks.json'
 with open(output_path, 'w') as f:
     json.dump(base_data, f, indent=2)
+f.close()
