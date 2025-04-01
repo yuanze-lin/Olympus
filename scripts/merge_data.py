@@ -47,6 +47,8 @@ print(count)
 print(task_count)
 
 print(len(x))
+
+# Save final training data
 final_json = 'jsons/Olympus.json'
 with open(final_json, 'w') as fp:
     json.dump(x, fp, indent=2)
