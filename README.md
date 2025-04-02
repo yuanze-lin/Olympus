@@ -42,10 +42,10 @@ We share our collected Olympus dataset as follows:
 
 | Instruction    | Link |
 |---------|------|
-| Olympus Task-wise Data | [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) |
-| Olympus Fine-tuning Data | [Olympus.json](https://drive.google.com/file/d/1CMLZLa6hkVN2K1ebCcJEOaFGc2cLeLQ7/view?usp=sharing) |
+| Olympus Dataset | [Olympus_dataset](https://huggingface.co/datasets/Yuanze/Olympus) |
+| Olympus Fine-tuning Data | [Olympus.json](https://huggingface.co/datasets/Yuanze/Olympus/resolve/main/Olympus.json) |
 
-- ```Olympus_20tasks_all```: There are 20 JSON files under ```20 individual tasks``` folder, each corresponding to a specific task. You can refer to the routing token definitions in our paper to identify the task associated with each JSON file, along with the chain-of-action data provided in ```coa.json```. Each of these 21 JSON files includes both training and test data.
+- ```Olympus_dataset```: There are 20 JSON files under ```20 individual tasks``` folder, each corresponding to a specific task. You can refer to the routing token definitions in our paper to identify the task associated with each JSON file, along with the chain-of-action data provided in ```coa.json```. Each of these 21 JSON files includes both training and test data.
 - ```Olympus.json```: The final instruction data for fine-tuning.
 
 
@@ -61,7 +61,7 @@ python download_olympus_json.py
 ```
 The json data will be saved as ```Olympus.json``` in the ```train_data``` folder. Note that ```Olympus.json``` includes ```llava_v1_5_mix665k.json``` combined with OlympusInstruct (our collected instruction data from 20 tasks).
 
-**If you want to merge the data manually, firstly create ```jsons``` folder by ```mkdir jsons```, download all the JSON files from [Olympus_20tasks_all](https://drive.google.com/drive/folders/1m3FYHarVG8eg7X7cMAC5N5NBG-p0ymw8?usp=drive_link) and [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) into the ```jsons``` folder, then run the merge script:**
+**If you want to merge the data manually, firstly create ```jsons``` folder by ```mkdir jsons```, download all the JSON files from [Olympus_dataset](https://huggingface.co/datasets/Yuanze/Olympus) and [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) into the ```jsons``` folder, then run the merge script:**
 
 ```
 python scripts/merge_data.py
