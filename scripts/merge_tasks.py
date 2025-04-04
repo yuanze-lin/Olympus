@@ -11,7 +11,7 @@ def remove_items_from_eval(task_name, data_list, eval_keys):
     return filtered_list
 
 # Load base dataset
-base_data_path = 'llava_v1_5_mix665k.json'
+base_data_path = 'jsons/llava_v1_5_mix665k.json'
 base_data = json.load(open(base_data_path))
 print(f"Initial base data size: {len(base_data)}")
 
