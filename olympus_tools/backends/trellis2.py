@@ -43,13 +43,37 @@ def _select_attn_backend() -> str:
     return backend
 
 
+def _patch_model_name(cls, path: str, label: str) -> None:
+    """Retry ``cls.__init__`` with ``path`` in place of the Hub repo name.
+
+    Re-running the real ``__init__`` rather than reimplementing it matters: both
+    of these classes set several attributes besides ``self.model`` (``eval()``,
+    transforms, image size), so a hand-rolled fallback constructs an object that
+    only fails later.
+    """
+    orig = cls.__init__
+
+    def _init(self, *a, **kw):
+        try:
+            return orig(self, *a, **kw)
+        except Exception:
+            print(f"[3D] {label}: loading from {path}")
+            if a:
+                a = (path,) + tuple(a[1:])
+            else:
+                kw = dict(kw, model_name=path)
+            return orig(self, *a, **kw)
+
+    cls.__init__ = _init
+
+
 def _apply_local_weight_overrides() -> None:
     """Let DINO_MODEL_PATH / SEG_MODEL_PATH point at locally-stored weights.
 
     TRELLIS.2 loads two gated repos by name: facebook/dinov3-vitl16-pretrain-lvd1689m
-    (image conditioning) and briaai/RMBG-2.0 (background removal). Users who
-    already hold those weights locally -- or who run offline / air-gapped -- can
-    set these environment variables to a directory instead::
+    (image conditioning) and briaai/RMBG-2.0 (background removal). Users whose
+    access request was rejected, or who run offline, can set these environment
+    variables to a directory instead::
 
         DINO_MODEL_PATH=/path/to/dinov3 SEG_MODEL_PATH=/path/to/rmbg \\
             python run_tools.py ...
@@ -65,40 +89,20 @@ def _apply_local_weight_overrides() -> None:
         try:
             from trellis2.modules import image_feature_extractor as _ife
 
-            _orig = _ife.DinoV3FeatureExtractor.__init__
-
-            def _init(self, model_name, *a, **kw):
-                try:
-                    return _orig(self, model_name, *a, **kw)
-                except Exception:
-                    from transformers import DINOv3ViTModel
-
-                    print(f"[3D] loading DINOv3 from DINO_MODEL_PATH={dino_path}")
-                    self.model = DINOv3ViTModel.from_pretrained(dino_path)
-                    return None
-
-            _ife.DinoV3FeatureExtractor.__init__ = _init
+            _patch_model_name(_ife.DinoV3FeatureExtractor, dino_path, "DINOv3")
         except Exception as exc:
             print(f"[3D] could not apply DINO_MODEL_PATH override: {exc}")
 
     if seg_path:
         try:
-            from trellis2.pipelines.rembg import BiRefNet as _birefnet
+            from trellis2.pipelines import rembg as _rembg
 
-            _orig_seg = _birefnet.BiRefNet.__init__
-
-            def _init_seg(self, model_name, *a, **kw):
-                try:
-                    return _orig_seg(self, model_name, *a, **kw)
-                except Exception:
-                    from transformers import AutoModelForImageSegmentation
-
-                    print(f"[3D] loading RMBG from SEG_MODEL_PATH={seg_path}")
-                    self.model = AutoModelForImageSegmentation.from_pretrained(
-                        seg_path, trust_remote_code=True)
-                    return None
-
-            _birefnet.BiRefNet.__init__ = _init_seg
+            # rembg/__init__.py star-imports the class over the submodule of the
+            # same name, so accept either layout.
+            target = getattr(_rembg, "BiRefNet")
+            if not isinstance(target, type):
+                target = target.BiRefNet
+            _patch_model_name(target, seg_path, "RMBG")
         except Exception as exc:
             print(f"[3D] could not apply SEG_MODEL_PATH override: {exc}")
 
