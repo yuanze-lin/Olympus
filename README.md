@@ -40,8 +40,8 @@ pip install -r requirements.txt
 ```
 That will create the environment ```olympus``` we used.
 
-That is all you need to run the router (`predict.py`). To also **execute** the
-predicted routing tokens and generate real images, videos and 3D models with
+That is all you need to run the router on its own. To also **execute** the routed
+tasks and generate real images, videos and 3D models with
 [`run_tools.py`](#specialists), install the specialist stack into the *same*
 environment:
 ```
@@ -131,45 +131,11 @@ python download_mipha_3b.py
 ```
 It will save the ```Mipha-3B``` model under the ```ckpts``` folder.
 
-### Inference
+### :rocket: Inference <a href="#specialists" id="specialists"/>
 
-Run the following code for inference: 
-```
-model_name=Olympus
-MODELDIR=ckpts/$model_name
-
-python predict.py \
-  --prompt "Generate an image of a fluffy orange cat lounging on a windowsill, \
-with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere. \
-Next, would it be possible to change the cat's color to white? This change will make it more eye-catching. \
-In the following step, produce a high-resolution 3D model based on the modified image. \
-At the next point, please show a video of a cat and a dog running on a playground." \
-  --model-path $MODELDIR \
-  --temperature 0 \
-  --conv-mode v0
-```
-Alternatively, you can run ```bash predict.sh``` as we did. 
-
-The prediction should be like:
-```
-Input Prompt:  Generate an image of a fluffy orange cat lounging on a windowsill,
-with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere.
-Next, would it be possible to change the cat's color to white? This change will make it more eye-catching.
-In the following step, produce a high-resolution 3D model based on the modified image.
-At the next point, please show a video of a cat and a dog running on a playground.
-
-Output:  <image_gen>a fluffy orange cat lounging on a windowsill, with sunlight streaming
-through the glass and casting soft shadows to create a cozy atmosphere.</image_gen>
-<image_edit>change the cat's color to white.</image_edit>
-<3D_gen_image>produce a high-resolution 3D model based on the modified image.</3D_gen_image>
-<video_gen>a cat and a dog running on a playground.</video_gen>
-```
-Change the ```--prompt``` to customize the input prompt as needed.
-
-### :rocket: From Routing Tokens to Real Outputs <a href="#specialists" id="specialists"/>
-
-`predict.py` shows you *which* specialist Olympus picked; `run_tools.py` actually
-**calls** it, so a single instruction turns into real images, videos and 3D meshes
+Give Olympus one instruction and get the finished assets back. It routes the
+instruction to the right specialists, **calls them**, and chains them together, so
+you end up with real images, videos and 3D meshes rather than routing tokens
 ([#1](https://github.com/yuanze-lin/Olympus/issues/1)).
 
 ```
@@ -192,7 +158,7 @@ python scripts/prefetch_specialists.py     # optional: pre-download everything
 
 #### Quick start
 
-Run the same example as `predict.sh`, but produce the actual assets:
+One instruction in, four finished assets out:
 
 ```
 python run_tools.py \
@@ -237,8 +203,13 @@ Measured on a single 48 GB GPU (the four steps above, full quality):
 |---|---|---|
 | `<image_gen>` | Qwen-Image | 131.5 s |
 | `<image_edit>` | Qwen-Image-Edit-2509 | 187.8 s |
-| `<3D_gen_image>` | Shap-E | 4.7 s |
+| `<3D_gen_image>` | Hunyuan3D-2 | 280.1 s |
 | `<video_gen>` | Wan2.2-TI2V-5B | 191.5 s |
+
+The `<3D_gen_image>` row is the Hunyuan3D-2 fallback: the measurement host had no
+access to TRELLIS.2's gated weights, so the default backend downgraded (see the
+[3D fallback chain](#supported-tasks-and-specialist-models)). Expect TRELLIS.2-4B
+to be slower and considerably higher quality.
 
 Useful flags:
 
@@ -320,6 +291,9 @@ Which model produced each artifact is recorded per step in `manifest.json`.
   `manifest.json` and the remaining steps still run.
 - **Extending it** takes one class: subclass `Backend`, decorate with
   `@register("my_backend")`, and point a token at it in `olympus_tools/tokens.py`.
+- **Just want the routing tokens?** `--dry-run` prints the plan without touching a
+  GPU. `predict.py` / `predict.sh` are also still there and unchanged, if you want
+  the raw router output as text for analysis rather than finished assets.
 
 #### Before you upgrade dependencies
 
@@ -330,8 +304,10 @@ the details are documented inline in that file.
 
 Note that on `transformers >= 4.50` the router previously failed *silently* — it
 still produced fluent text but emitted no routing tokens at all. That is fixed
-here, but if you change any pin, always re-check that `predict.py` still
-reproduces the routing tokens shown above.
+here, but if you change any pin, always re-check that the router still emits
+routing tokens: `python run_tools.py --prompt "..." --dry-run` prints the parsed
+plan without loading a single specialist, so an empty plan means the router
+regressed.
 
 Verify an install with:
 
