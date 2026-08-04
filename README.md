@@ -49,7 +49,7 @@ pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorc
 pip install -r requirements_tools.txt
 bash scripts/install_specialists.sh
 ```
-The router and every specialist share this one environment — there is no
+The router and every specialist share this one environment; there is no
 per-tool environment to manage.
 
 **3D backends.** `<3D_gen_image>` uses
@@ -62,8 +62,8 @@ bash scripts/install_3d.sh
 ```
 That builds both, plus Hunyuan3D-2 as an ungated fallback for `<3D_gen_image>`.
 Each step is independent, so a failure in one does not block the others, and any
-3D token whose backend is missing falls back automatically rather than erroring —
-see the [3D fallback chain](#supported-tasks-and-specialist-models) below.
+3D token whose backend is missing falls back automatically rather than erroring.
+See the [3D fallback chain](#supported-tasks-and-specialist-models) below.
 
 > **TRELLIS.2-4B needs two gated Hugging Face repos at runtime:**
 > [`facebook/dinov3-vitl16-pretrain-lvd1689m`](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m)
@@ -71,18 +71,16 @@ see the [3D fallback chain](#supported-tasks-and-specialist-models) below.
 > (background removal). Accept both licenses on the Hub while logged in
 > (`huggingface-cli login`) and nothing else is needed.
 >
-> If you already hold these weights locally — from a mirror, an internal store, or
-> an offline machine — point at the folders instead of the gated repo names:
+> If your request is rejected, obtain the weights locally (see
+> [microsoft/TRELLIS.2#38](https://github.com/microsoft/TRELLIS.2/issues/38)) and
+> point at the folders:
 > ```
 > DINO_MODEL_PATH=/path/to/dinov3-vitl16-pretrain-lvd1689m \
 > SEG_MODEL_PATH=/path/to/RMBG-2.0 \
 >   python run_tools.py --prompt "..." --input-image assets/room.jpg
 > ```
-> `Trellis2Backend` tries the normal `from_pretrained("facebook/dinov3-...")` /
-> `from_pretrained("briaai/RMBG-2.0")` call first; only if that raises (e.g. a
-> `403` because the gate isn't cleared) does it fall back to these paths. Leave
-> both unset if you have Hub access. Neither is needed at all if you let
-> `<3D_gen_image>` fall back to Hunyuan3D-2, which is fully ungated.
+> The Hub call is tried first; these apply only if it fails. Or skip TRELLIS.2 and
+> let `<3D_gen_image>` fall back to Hunyuan3D-2, which is ungated.
 
 ### Download Models & Data ###
 We share our collected Olympus dataset as follows:
@@ -162,7 +160,7 @@ At the next point, please show a video of a cat and a dog running on a playgroun
 ```
 
 Olympus routes the instruction to four specialists and **chains them
-automatically** — the edit runs on the generated image, and the 3D model is built
+automatically**: the edit runs on the generated image, and the 3D model is built
 from the edited image:
 
 ```
@@ -255,8 +253,8 @@ Which model produced each artifact is recorded per step in `manifest.json`.
 > CC-BY-NC-4.0 (non-commercial). For a permissive alternative use
 > `--backend-model image_depth=depth-anything/Depth-Anything-V2-Small-hf`
 > (Apache-2.0). Hunyuan3D-2 (the automatic fallback for `<3D_gen_image>`) is
-> released under the `tencent-hunyuan-community` license, not MIT/Apache —
-> check its terms before commercial use.
+> released under the `tencent-hunyuan-community` license, not MIT/Apache.
+> Check its terms before commercial use.
 
 #### Notes
 
@@ -272,7 +270,7 @@ Which model produced each artifact is recorded per step in `manifest.json`.
   before the next is built, so peak VRAM is roughly a single model rather than the
   sum. The router is freed before the first specialist loads. The large models
   (Qwen-Image, Wan2.2) use CPU offload; on a 48 GB card `<image_gen>` takes about
-  6 minutes at full quality — lower `--step-option image_gen.steps=15` to trade
+  6 minutes at full quality; lower `--step-option image_gen.steps=15` to trade
   quality for speed.
 - **Condition maps are handled for you.** `<canny_to_image>` on a raw photo derives
   the edge map first; chained after `<image_canny>` the upstream map is reused
@@ -287,12 +285,12 @@ Which model produced each artifact is recorded per step in `manifest.json`.
 
 #### Before you upgrade dependencies
 
-`requirements_tools.txt` pins a deliberately narrow window — `transformers` must
+`requirements_tools.txt` pins a deliberately narrow window: `transformers` must
 be **>= 4.50 and < 5.0** (verified on 4.57.6). Older releases are too old for
 Qwen-Image's text encoder, and 5.x drops an API the router's vision tower needs;
 the details are documented inline in that file.
 
-Note that on `transformers >= 4.50` the router previously failed *silently* — it
+Note that on `transformers >= 4.50` the router previously failed *silently*: it
 still produced fluent text but emitted no routing tokens at all. That is fixed
 here, but if you change any pin, always re-check that the router still emits
 routing tokens: `python run_tools.py --prompt "..." --dry-run` prints the parsed
