@@ -40,6 +40,18 @@ pip install -r requirements.txt
 ```
 That will create the environment ```olympus``` we used.
 
+That is all you need to run the router (`predict.py`). To also **execute** the
+predicted routing tokens and generate real images, videos and 3D models with
+[`run_tools.py`](#specialists), install the specialist stack into the *same*
+environment:
+```
+pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements_tools.txt
+bash scripts/install_specialists.sh
+```
+The router and every specialist share this one environment — there is no
+per-tool environment to manage.
+
 ### Download Models & Data ###
 We share our collected Olympus dataset as follows:
 
@@ -125,19 +137,11 @@ Change the ```--prompt``` to customize the input prompt as needed.
                     └──────────────┘                    └───────────────────┘
 ```
 
-#### Install
+#### Model weights
 
-The router and **every** specialist run in a **single `olympus` environment**:
-
-```
-conda activate olympus
-pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
-pip install -r requirements_tools.txt
-bash scripts/install_specialists.sh
-```
-
-Weights stream from the Hugging Face Hub on first use. The SOTA defaults are
-large (~200 GB if you exercise every token), so point the cache at a big disk:
+Requires the specialist stack from [Environment Installation](#install).
+Weights stream from the Hugging Face Hub on first use. The defaults are large
+(~200 GB if you exercise every token), so point the cache at a big disk:
 
 ```
 export HF_HOME=/path/to/big/disk/hf_cache
@@ -265,23 +269,14 @@ Which model produced each artifact is recorded per step in `manifest.json`.
 - **Extending it** takes one class: subclass `Backend`, decorate with
   `@register("my_backend")`, and point a token at it in `olympus_tools/tokens.py`.
 
-#### Dependency notes (please read before upgrading)
+#### Before you upgrade dependencies
 
-Running a 2024 router alongside 2025/2026 specialists in one environment needs a
-specific version window. Two fixes make it possible:
-
-1. **`mipha_phi.py` now supplies `position_ids` and handles `Cache` objects.**
-   transformers ≥ 4.50 stopped inferring absolute positions from the cache
-   length, and hands `generate()` an already-instantiated empty cache, so the old
-   `if past_key_values:` test never fired. The result was a *silent* failure: the
-   router still produced fluent text, but every token after the first was decoded
-   at position 0, so it emitted no routing tokens at all. Olympus now runs
-   correctly on modern transformers.
-2. **`timm` must be ≥ 1.0.** transformers ≥ 4.49 ships a `timm_wrapper` model that
-   imports `timm.data.ImageNetInfo`, added in timm 1.0. `controlnet_aux 0.0.9`
-   declares `timm<=0.6.7`, but that pin is stale — the detectors Olympus uses
-   (OpenPose, DWPose, NormalBAE, PidiNet) are verified working on timm 1.0.15, so
-   install timm afterwards and ignore pip's warning.
+`requirements_tools.txt` pins a deliberately narrow version window (notably
+`transformers==4.49.0` and `timm==1.0.15`); the reasoning is documented inline in
+that file. The important one: on `transformers >= 4.50` older releases of this
+repo failed *silently* — the router still produced fluent text but emitted no
+routing tokens. That is fixed here, but if you change versions, always re-check
+that `predict.py` still reproduces the routing tokens shown above.
 
 Verify an install with:
 
