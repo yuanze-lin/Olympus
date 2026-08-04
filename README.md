@@ -52,35 +52,27 @@ bash scripts/install_specialists.sh
 The router and every specialist share this one environment — there is no
 per-tool environment to manage.
 
-**Optional, for high-quality 3D.** `<3D_gen_image>` defaults to
+**3D backends.** `<3D_gen_image>` uses
 [TRELLIS.2-4B](https://huggingface.co/microsoft/TRELLIS.2-4B) and `<3D_gen_text>`
-to [TRELLIS-text-base](https://huggingface.co/microsoft/TRELLIS-text-base), both
-of which produce textured meshes with PBR materials. They compile several CUDA
-extensions, so this is a separate step:
+uses [TRELLIS-text-base](https://huggingface.co/microsoft/TRELLIS-text-base), both
+producing textured meshes with PBR materials. They compile several CUDA
+extensions, so they install separately:
 ```
-bash scripts/install_trellis2.sh   # <3D_gen_image>, TRELLIS.2-4B
-bash scripts/install_trellis1.sh   # <3D_gen_text>,  TRELLIS-text-base
+bash scripts/install_3d.sh
 ```
-Or run `bash scripts/install_3d.sh` to attempt all three 3D backends
-(TRELLIS.2-4B, its ungated fallback Hunyuan3D-2, and TRELLIS-text-base) in one
-go — each step is independent, so a failure in one does not block the others.
-Skip all of them and every 3D token automatically falls back to a weaker but
-fully open backend (Hunyuan3D-2, then Shap-E for images; Shap-E for text) — see
-the [3D fallback chain](#supported-tasks-and-specialist-models) below.
+That builds both, plus Hunyuan3D-2 as an ungated fallback for `<3D_gen_image>`.
+Each step is independent, so a failure in one does not block the others, and any
+3D token whose backend is missing falls back automatically rather than erroring —
+see the [3D fallback chain](#supported-tasks-and-specialist-models) below.
 
 > **TRELLIS.2-4B needs two gated Hugging Face repos at runtime:**
 > [`facebook/dinov3-vitl16-pretrain-lvd1689m`](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m)
 > (image conditioning) and [`briaai/RMBG-2.0`](https://huggingface.co/briaai/RMBG-2.0)
-> (background removal). Meta and BRIA gate these behind a license click-through
-> that isn't always approved quickly (or at all). If you'd rather not create an
-> account / hand over personal information to get access, both are mirrored on
-> **ModelScope** (a Chinese hub — not the official provider, but a straight copy
-> of the public weights) with no login required:
-> - https://www.modelscope.cn/models/facebook/dinov3-vitl16-pretrain-lvd1689m
-> - https://www.modelscope.cn/models/AI-ModelScope/RMBG-2.0
+> (background removal). Accept both licenses on the Hub while logged in
+> (`huggingface-cli login`) and nothing else is needed.
 >
-> Download both folders locally, then point `run_tools.py` at them with two
-> environment variables instead of the gated Hub repo names:
+> If you already hold these weights locally — from a mirror, an internal store, or
+> an offline machine — point at the folders instead of the gated repo names:
 > ```
 > DINO_MODEL_PATH=/path/to/dinov3-vitl16-pretrain-lvd1689m \
 > SEG_MODEL_PATH=/path/to/RMBG-2.0 \
@@ -88,11 +80,9 @@ the [3D fallback chain](#supported-tasks-and-specialist-models) below.
 > ```
 > `Trellis2Backend` tries the normal `from_pretrained("facebook/dinov3-...")` /
 > `from_pretrained("briaai/RMBG-2.0")` call first; only if that raises (e.g. a
-> `403` because the gate isn't cleared) does it fall back to loading from
-> `DINO_MODEL_PATH` / `SEG_MODEL_PATH`. Leave both unset if you already have Hub
-> access — nothing changes for you. Neither variable is needed at all if you skip
-> TRELLIS.2 and let `<3D_gen_image>` fall back to Hunyuan3D-2, which is fully
-> ungated.
+> `403` because the gate isn't cleared) does it fall back to these paths. Leave
+> both unset if you have Hub access. Neither is needed at all if you let
+> `<3D_gen_image>` fall back to Hunyuan3D-2, which is fully ungated.
 
 ### Download Models & Data ###
 We share our collected Olympus dataset as follows:
