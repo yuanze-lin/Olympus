@@ -11,9 +11,38 @@ from transformers import AutoConfig, AutoModelForCausalLM, \
 from transformers.modeling_outputs import CausalLMOutputWithPast
 from ..mipha_arch import MiphaMetaModel, MiphaMetaForCausalLM
 from transformers.utils import logging
+# transformers >= 4.50 no longer gives PreTrainedModel a GenerationMixin base, so
+# models overriding prepare_inputs_for_generation must inherit it explicitly or
+# lose .generate(). Older versions expose it at the same path, so this is safe.
+try:
+    from transformers.generation import GenerationMixin
+except ImportError:  # transformers < 4.30
+    from transformers.generation.utils import GenerationMixin
+
 from .configuration_mipha import MiphaPhiConfig
 
 logger = logging.get_logger(__name__)
+
+
+def _past_length(past_key_values) -> int:
+    """Number of cached positions, for legacy tuple caches and Cache objects alike.
+
+    transformers >= 4.50 hands `generate()` an already-instantiated (empty)
+    DynamicCache, so the old `if past_key_values:` truthiness test no longer
+    distinguishes "first step" from "later step".
+    """
+    if past_key_values is None:
+        return 0
+    get_seq_length = getattr(past_key_values, "get_seq_length", None)
+    if callable(get_seq_length):
+        try:
+            return int(get_seq_length() or 0)
+        except TypeError:
+            return 0
+    try:
+        return int(past_key_values[0][0].shape[2])
+    except (IndexError, AttributeError, TypeError):
+        return 0
 
 
 class MiphaPhiModel(MiphaMetaModel, PhiModel):
@@ -23,7 +52,7 @@ class MiphaPhiModel(MiphaMetaModel, PhiModel):
         super(MiphaPhiModel, self).__init__(config)
 
 
-class MiphaPhiForCausalLM(PhiPreTrainedModel, MiphaMetaForCausalLM):
+class MiphaPhiForCausalLM(PhiPreTrainedModel, GenerationMixin, MiphaMetaForCausalLM):
     config_class = MiphaPhiConfig
     _tied_weights_keys = ["lm_head.weight"]
 
@@ -42,6 +71,7 @@ class MiphaPhiForCausalLM(PhiPreTrainedModel, MiphaMetaForCausalLM):
             self,
             input_ids: torch.LongTensor = None,
             attention_mask: Optional[torch.Tensor] = None,
+            position_ids: Optional[torch.LongTensor] = None,
             past_key_values: Optional[List[torch.FloatTensor]] = None,
             inputs_embeds: Optional[torch.FloatTensor] = None,
             labels: Optional[torch.LongTensor] = None,
@@ -49,6 +79,7 @@ class MiphaPhiForCausalLM(PhiPreTrainedModel, MiphaMetaForCausalLM):
             output_attentions: Optional[bool] = None,
             output_hidden_states: Optional[bool] = None,
             images: Optional[torch.FloatTensor] = None,
+            cache_position: Optional[torch.LongTensor] = None,
             return_dict: Optional[bool] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -60,10 +91,22 @@ class MiphaPhiForCausalLM(PhiPreTrainedModel, MiphaMetaForCausalLM):
         input_ids, attention_mask, past_key_values, inputs_embeds, labels = self.prepare_inputs_labels_for_multimodal(
             input_ids, attention_mask, past_key_values, labels, images)
 
+        # From transformers 4.50 the Phi decoder no longer infers absolute
+        # positions from the cache length, so they must be supplied explicitly.
+        # Without this every decoding step after the first is treated as
+        # position 0 and generation degenerates into repeated text.
+        if position_ids is None:
+            seq_len = (inputs_embeds if inputs_embeds is not None else input_ids).shape[1]
+            past_len = _past_length(past_key_values)
+            device = (inputs_embeds if inputs_embeds is not None else input_ids).device
+            position_ids = torch.arange(past_len, past_len + seq_len,
+                                        dtype=torch.long, device=device).unsqueeze(0)
+
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
         outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
+            position_ids=position_ids,
             past_key_values=past_key_values,
             inputs_embeds=inputs_embeds,
             use_cache=use_cache,
@@ -101,22 +144,31 @@ class MiphaPhiForCausalLM(PhiPreTrainedModel, MiphaMetaForCausalLM):
         )
 
     def prepare_inputs_for_generation(
-            self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
+            self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None,
+            cache_position=None, position_ids=None, **kwargs
     ):
-        if past_key_values:
+        past_len = _past_length(past_key_values)
+        if past_len > 0:
             input_ids = input_ids[:, -1:]
 
         # if `inputs_embeds` are passed, we only want to use them in the 1st generation step
-        if inputs_embeds is not None and past_key_values is None:
+        if inputs_embeds is not None and past_len == 0:
             model_inputs = {"inputs_embeds": inputs_embeds}
         else:
             model_inputs = {"input_ids": input_ids}
+
+        if position_ids is None:
+            position_ids = torch.arange(
+                past_len, past_len + input_ids.shape[1],
+                dtype=torch.long, device=input_ids.device,
+            ).unsqueeze(0)
 
         model_inputs.update(
             {
                 "past_key_values": past_key_values,
                 "use_cache": kwargs.get("use_cache"),
                 "attention_mask": attention_mask,
+                "position_ids": position_ids,
                 "images": kwargs.get("images", None),
             }
         )

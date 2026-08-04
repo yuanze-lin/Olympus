@@ -11,6 +11,14 @@ from .phi3.modeling_phi3 import Phi3Model, Phi3PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
 from ..mipha_arch import MiphaMetaModel, MiphaMetaForCausalLM
 from transformers.utils import logging
+# transformers >= 4.50 no longer gives PreTrainedModel a GenerationMixin base, so
+# models overriding prepare_inputs_for_generation must inherit it explicitly or
+# lose .generate(). Older versions expose it at the same path, so this is safe.
+try:
+    from transformers.generation import GenerationMixin
+except ImportError:  # transformers < 4.30
+    from transformers.generation.utils import GenerationMixin
+
 from .configuration_mipha import MiphaPhi3Config
 
 logger = logging.get_logger(__name__)
@@ -23,7 +31,7 @@ class MiphaPhi3Model(MiphaMetaModel, Phi3Model):
         super(MiphaPhi3Model, self).__init__(config)
 
 
-class MiphaPhi3ForCausalLM(Phi3PreTrainedModel, MiphaMetaForCausalLM):
+class MiphaPhi3ForCausalLM(Phi3PreTrainedModel, GenerationMixin, MiphaMetaForCausalLM):
     config_class = MiphaPhi3Config
     _tied_weights_keys = ["lm_head.weight"]
 
