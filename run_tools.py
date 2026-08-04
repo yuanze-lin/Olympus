@@ -139,11 +139,17 @@ def main():
                          "the current SOTA defaults")
     args = ap.parse_args()
 
+    # Backend selection must settle BEFORE the plan is parsed, because each step
+    # records the backend it will run on.
+    import olympus_tools.backends as _backends  # registers every backend
+
     if args.legacy_backends:
         from olympus_tools.tokens import apply_legacy_backends
 
         apply_legacy_backends()
         print("Using the paper's Table 9 specialists (--legacy-backends).")
+    else:
+        _backends.resolve_3d_backends()  # downgrade 3D tokens if TRELLIS.2 is absent
 
     if args.list_tokens:
         from olympus_tools.tokens import ALL_TASKS
@@ -191,7 +197,8 @@ def main():
         step_options.setdefault(token, {})[opt] = value
 
     from olympus_tools.runner import Runner
-    import olympus_tools.backends  # noqa: F401  (registers backends)
+    import olympus_tools.backends as _backends  # registers backends
+
 
     print(f"\nExecuting {len(plan.steps)} step(s) -> {args.output_dir}")
     runner = Runner(args.output_dir, device=args.device, dtype=args.dtype,

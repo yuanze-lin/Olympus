@@ -21,8 +21,14 @@ from PIL import Image, ImageDraw  # noqa: E402
 
 from olympus_tools.parser import parse  # noqa: E402
 from olympus_tools.runner import Runner  # noqa: E402
+import olympus_tools.backends as _backends  # noqa: E402
+
+# Must run BEFORE ALL_TASKS is read below: it may repoint 3D_gen_image /
+# 3D_gen_text at a fallback backend, and TaskSpec.backend is read from this
+# list, not re-resolved per step.
+_backends.resolve_3d_backends()
+
 from olympus_tools.tokens import ALL_TASKS, IMAGE, VIDEO, NONE  # noqa: E402
-import olympus_tools.backends  # noqa: F401,E402
 
 # A short, representative payload per token (what the router would emit).
 PROMPTS = {

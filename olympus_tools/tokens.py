@@ -88,9 +88,9 @@ _BASE_TASKS: List[TaskSpec] = [
     TaskSpec("video_ref_seg", "Referring Video Object Segmentation", "rvos", "GLEE",
              consumes=VIDEO, produces=VIDEO),
     # ---- 3D ---------------------------------------------------------------
-    TaskSpec("3D_gen_text", "Text-to-3D Generation", "text_to_3d", "LGM",
+    TaskSpec("3D_gen_text", "Text-to-3D Generation", "trellis_text", "LGM",
              consumes=NONE, produces=MESH),
-    TaskSpec("3D_gen_image", "Image-to-3D Generation", "image_to_3d", "Wonder3D",
+    TaskSpec("3D_gen_image", "Image-to-3D Generation", "trellis2", "Wonder3D",
              consumes=IMAGE, produces=MESH),
 ]
 
@@ -123,22 +123,26 @@ LEGACY_BACKENDS: Dict[str, str] = {
     "image_depth": "depth_anything",     # Depth Anything V2
     "video_gen": "cogvideox",            # CogVideoX
     "video_edit": "t2v_zero_edit",       # Text2Video-Zero
+    "3D_gen_text": "text_to_3d",         # Shap-E (stands in for LGM)
+    "3D_gen_image": "image_to_3d",       # Shap-E / TripoSR (stands in for Wonder3D)
 }
 
 
-def apply_legacy_backends() -> None:
-    """Switch the affected tokens back to their Table 9 specialists in place."""
+def override_backends(mapping: Dict[str, str]) -> None:
+    """Repoint specific tokens at different backends, in place."""
     global ALL_TASKS, TOKEN_TO_SPEC
-    swapped = []
-    for spec in ALL_TASKS:
-        legacy = LEGACY_BACKENDS.get(spec.token)
-        swapped.append(replace(spec, backend=legacy) if legacy else spec)
-    ALL_TASKS = swapped
+    ALL_TASKS = [replace(s, backend=mapping[s.token]) if s.token in mapping else s
+                 for s in ALL_TASKS]
     TOKEN_TO_SPEC = {}
     for spec in ALL_TASKS:
         TOKEN_TO_SPEC[spec.token] = spec
         for alias in spec.aliases:
             TOKEN_TO_SPEC[alias] = spec
+
+
+def apply_legacy_backends() -> None:
+    """Switch the affected tokens back to their Table 9 specialists in place."""
+    override_backends(LEGACY_BACKENDS)
 
 
 # token (and alias) -> TaskSpec

@@ -52,6 +52,48 @@ bash scripts/install_specialists.sh
 The router and every specialist share this one environment — there is no
 per-tool environment to manage.
 
+**Optional, for high-quality 3D.** `<3D_gen_image>` defaults to
+[TRELLIS.2-4B](https://huggingface.co/microsoft/TRELLIS.2-4B) and `<3D_gen_text>`
+to [TRELLIS-text-base](https://huggingface.co/microsoft/TRELLIS-text-base), both
+of which produce textured meshes with PBR materials. They compile several CUDA
+extensions, so this is a separate step:
+```
+bash scripts/install_trellis2.sh   # <3D_gen_image>, TRELLIS.2-4B
+bash scripts/install_trellis1.sh   # <3D_gen_text>,  TRELLIS-text-base
+```
+Or run `bash scripts/install_3d.sh` to attempt all three 3D backends
+(TRELLIS.2-4B, its ungated fallback Hunyuan3D-2, and TRELLIS-text-base) in one
+go — each step is independent, so a failure in one does not block the others.
+Skip all of them and every 3D token automatically falls back to a weaker but
+fully open backend (Hunyuan3D-2, then Shap-E for images; Shap-E for text) — see
+the [3D fallback chain](#supported-tasks-and-specialist-models) below.
+
+> **TRELLIS.2-4B needs two gated Hugging Face repos at runtime:**
+> [`facebook/dinov3-vitl16-pretrain-lvd1689m`](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m)
+> (image conditioning) and [`briaai/RMBG-2.0`](https://huggingface.co/briaai/RMBG-2.0)
+> (background removal). Meta and BRIA gate these behind a license click-through
+> that isn't always approved quickly (or at all). If you'd rather not create an
+> account / hand over personal information to get access, both are mirrored on
+> **ModelScope** (a Chinese hub — not the official provider, but a straight copy
+> of the public weights) with no login required:
+> - https://www.modelscope.cn/models/facebook/dinov3-vitl16-pretrain-lvd1689m
+> - https://www.modelscope.cn/models/AI-ModelScope/RMBG-2.0
+>
+> Download both folders locally, then point `run_tools.py` at them with two
+> environment variables instead of the gated Hub repo names:
+> ```
+> DINO_MODEL_PATH=/path/to/dinov3-vitl16-pretrain-lvd1689m \
+> SEG_MODEL_PATH=/path/to/RMBG-2.0 \
+>   python run_tools.py --prompt "..." --input-image assets/room.jpg
+> ```
+> `Trellis2Backend` tries the normal `from_pretrained("facebook/dinov3-...")` /
+> `from_pretrained("briaai/RMBG-2.0")` call first; only if that raises (e.g. a
+> `403` because the gate isn't cleared) does it fall back to loading from
+> `DINO_MODEL_PATH` / `SEG_MODEL_PATH`. Leave both unset if you already have Hub
+> access — nothing changes for you. Neither variable is needed at all if you skip
+> TRELLIS.2 and let `<3D_gen_image>` fall back to Hunyuan3D-2, which is fully
+> ungated.
+
 ### Download Models & Data ###
 We share our collected Olympus dataset as follows:
 
@@ -173,7 +215,7 @@ Execution plan:
         "a fluffy orange cat lounging on a windowsill, ..."
   [1] <image_edit> via qwen_image_edit  <- step 0
         "change the cat's color to white."
-  [2] <3D_gen_image> via image_to_3d  <- step 1
+  [2] <3D_gen_image> via trellis2  <- step 1
         "produce a high-resolution 3D model based on the modified image."
   [3] <video_gen> via wan_video
         "a cat and a dog running on a playground."
@@ -185,7 +227,7 @@ outputs/cat/
 ├── manifest.json                   # what ran, how long, which model, where it landed
 ├── step0_image_gen.png
 ├── step1_image_edit.png
-├── step2_3D_gen_image.ply / .glb   # open in any 3D viewer
+├── step2_3D_gen_image.glb          # textured mesh with PBR materials
 └── step3_video_gen.mp4
 ```
 
@@ -241,8 +283,8 @@ state-of-the-art models; `--legacy-backends` restores the paper's configuration.
 | `<image_det>` | Object Detection | DETR | Co-DETR *(needs mmdetection)* |
 | `<image_normal>` | Normal Estimation | NormalBAE | Sapiens *(bespoke build)* |
 | `<video_ref_seg>` | Referring Video Seg. | GroundingDINO + SAM | GLEE *(needs detectron2)* |
-| `<3D_gen_text>` | Text-to-3D | Shap-E | LGM *(custom rasteriser)* |
-| `<3D_gen_image>` | Image-to-3D | TripoSR if installed, else Shap-E | Wonder3D *(custom build)* |
+| `<3D_gen_text>` | Text-to-3D | **TRELLIS-text-base** → Shap-E | LGM |
+| `<3D_gen_image>` | Image-to-3D | **TRELLIS.2-4B** → Hunyuan3D-2 → Shap-E | Wonder3D |
 | `<{pose,canny,depth,normal,seg,scrib}_to_image>` | Controllable Image Gen | ControlNet (per condition) | ControlNet |
 | `<{pose,canny,depth,normal,seg,scrib}_to_video>` | Controllable Video Gen | Text2Video-Zero + ControlNet | Text2Video-Zero |
 
@@ -251,9 +293,19 @@ Which model produced each artifact is recorded per step in `manifest.json`.
 > **Licensing note.** Depth Anything 3 checkpoints are released under
 > CC-BY-NC-4.0 (non-commercial). For a permissive alternative use
 > `--backend-model image_depth=depth-anything/Depth-Anything-V2-Small-hf`
-> (Apache-2.0).
+> (Apache-2.0). Hunyuan3D-2 (the automatic fallback for `<3D_gen_image>`) is
+> released under the `tencent-hunyuan-community` license, not MIT/Apache —
+> check its terms before commercial use.
 
 #### Notes
+
+- **3D tokens degrade automatically, in order.** `<3D_gen_image>` tries
+  TRELLIS.2-4B first; if its gated DINOv3/RMBG weights aren't reachable (no Hub
+  access and no `DINO_MODEL_PATH`/`SEG_MODEL_PATH` override, see above) it prints
+  why and drops to Hunyuan3D-2, then to Shap-E if that isn't installed either.
+  `<3D_gen_text>` tries TRELLIS-text-base, then Shap-E. Every run still produces
+  a mesh; `manifest.json`'s `substitution` field records which model actually
+  ran, so nothing is silently swapped without a paper trail.
 
 - **One GPU is enough.** Specialists load lazily and the previous one is evicted
   before the next is built, so peak VRAM is roughly a single model rather than the
