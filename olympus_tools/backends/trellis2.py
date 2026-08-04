@@ -220,8 +220,12 @@ class Trellis2Backend(Backend):
         glb.export(out, extension_webp=True)
         return out
 
-    def _preview(self, mesh, out_stem: str) -> Optional[str]:
-        """Turntable render; best effort, needs the repo's HDRI asset."""
+    def _render_videos(self, mesh, out_stem: str) -> dict:
+        """Turntable renders; best effort, needs the repo's HDRI asset.
+
+        ``render_video`` returns every PBR channel in one pass, so both the
+        beauty render and the channel sheet are essentially free once it has run.
+        """
         try:
             import cv2
             import imageio
@@ -234,14 +238,23 @@ class Trellis2Backend(Backend):
                 img = cv2.cvtColor(cv2.imread(hdri, cv2.IMREAD_UNCHANGED),
                                    cv2.COLOR_BGR2RGB)
                 envmap = EnvMap(torch.tensor(img, dtype=torch.float32, device="cuda"))
-            frames = render_utils.make_pbr_vis_frames(
-                render_utils.render_video(mesh, envmap=envmap)
-            )
-            out = f"{out_stem}_preview.mp4"
-            imageio.mimsave(out, frames, fps=15)
+            rendered = render_utils.render_video(mesh, envmap=envmap)
+
+            out = {}
+            # The lit turntable on its own: what you actually want to look at.
+            # Keyed "render" rather than "video" so it stays an artifact and does
+            # not become chainable input for a downstream video step.
+            video = f"{out_stem}.mp4"
+            imageio.mimsave(video, rendered["shaded"], fps=15)
+            out["render"] = video
+            # Shaded + normal + base colour + metallic + roughness + alpha tiled
+            # into one frame, as in the model card's example.
+            pbr = f"{out_stem}_pbr.mp4"
+            imageio.mimsave(pbr, render_utils.make_pbr_vis_frames(rendered), fps=15)
+            out["render_pbr"] = pbr
             return out
         except Exception:
-            return None
+            return {}
 
     def run(self, prompt, input_path, out_stem, step=None, **kw):
         if not input_path:
@@ -253,9 +266,7 @@ class Trellis2Backend(Backend):
 
         result = {"mesh": self._to_glb(mesh, out_stem, **kw)}
         result["glb"] = result["mesh"]
-        preview = self._preview(mesh, out_stem)
-        if preview:
-            result["preview"] = preview
+        result.update(self._render_videos(mesh, out_stem))
         result["model"] = self.model_id
         return result
 

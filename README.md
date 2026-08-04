@@ -136,12 +136,14 @@ At the next point, please show a video of a cat and a dog running on a playgroun
 
 ```
 outputs/cat/
-├── step0_image_gen.png       # Qwen-Image
-├── step1_image_edit.png      # Qwen-Image-Edit-2509, edits step 0
-├── step2_3D_gen_image.glb    # TRELLIS.2-4B, built from step 1
-├── step3_video_gen.mp4       # Wan2.2-TI2V-5B
-├── plan.json                 # parsed routing tokens + dataflow
-└── manifest.json             # model, timing and inputs per step
+├── step0_image_gen.png          # Qwen-Image
+├── step1_image_edit.png         # Qwen-Image-Edit-2509, edits step 0
+├── step2_3D_gen_image.glb       # TRELLIS.2-4B, built from step 1
+├── step2_3D_gen_image.mp4       # turntable render of the mesh
+├── step2_3D_gen_image_pbr.mp4   # same turntable, PBR channels tiled
+├── step3_video_gen.mp4          # Wan2.2-TI2V-5B
+├── plan.json                    # parsed routing tokens + dataflow
+└── manifest.json                # model, timing and inputs per step
 ```
 
 Dependencies between steps are resolved for you: the edit runs on the generated
