@@ -10,27 +10,31 @@
 #   bash scripts/install_specialists.sh
 #
 # --------------------------------------------------------------------------
-# WHY transformers IS PINNED TO EXACTLY 4.49.0
+# WHY transformers IS PINNED TO 4.57.x
 # --------------------------------------------------------------------------
-# * transformers 5.x  -> removes CLIPVisionTransformer, so mipha's vision tower
-#                        fails to import outright.
-# * transformers 4.57 -> imports and generates, but the router silently emits
-#                        WRONG text instead of routing tokens. This failure is
-#                        silent: no exception, just garbage output. Do not
-#                        upgrade without checking predict.py still reproduces the
-#                        routing tokens shown in the README.
-# * transformers 4.49 -> verified correct for the router AND new enough for
-#                        Qwen2.5-VL (Qwen-Image's text encoder) and diffusers
-#                        0.39 pipelines.
+# The usable window is transformers >= 4.50, < 5.0. Verified on 4.57.6.
+#
+# * transformers 5.x   -> removes CLIPVisionTransformer, so mipha's vision tower
+#                         fails to import outright.
+# * transformers <=4.49 -> too old for Qwen-Image: loading its Qwen2.5-VL text
+#                         encoder dies with "'dict' object has no attribute
+#                         'to_dict'". The router itself works on 4.49, but the
+#                         default <image_gen>/<image_edit> backends do not.
+#
+# NOTE: on transformers >= 4.50 the router used to fail SILENTLY -- it produced
+# fluent text but no routing tokens, because mipha passed no position_ids and
+# every token after the first decoded at position 0. That is fixed in
+# mipha/model/language_model/mipha_phi.py. If you change this pin, always check
+# that predict.py still reproduces the routing tokens shown in the README.
 # --------------------------------------------------------------------------
-transformers==4.49.0
-tokenizers>=0.21,<0.22
+transformers==4.57.6
+tokenizers>=0.22,<0.23
 
 # diffusers 0.39 is required for QwenImagePipeline and WanPipeline (Wan2.2).
 diffusers==0.39.0
 peft>=0.17.0          # hard requirement of diffusers 0.39
-accelerate>=1.4.0
-huggingface_hub>=0.29.1
+accelerate>=1.14.0
+huggingface_hub>=0.36.0
 safetensors
 sentencepiece
 protobuf
@@ -42,18 +46,15 @@ einops
 opencv-python==4.11.0.86
 matplotlib
 
-# timm 1.0.x is REQUIRED: transformers>=4.49 ships a timm_wrapper model that
-# imports timm.data.ImageNetInfo, which only exists from timm 1.0. Without it,
-# GroundingDINO (<image_ground>) and InstructIR (<image_deblur>/<image_denoise>/
-# <image_derain>) fail to import.
-#
-# pip will warn that controlnet_aux 0.0.9 wants timm<=0.6.7. That pin is stale:
-# the detectors Olympus uses (OpenPose, DWPose, NormalBAE, PidiNet) were verified
-# working on timm 1.0.15. Install timm AFTER controlnet_aux and ignore the warning.
-timm==1.0.15
-
 # condition-map estimators for controllable generation (pose/normal/scribble)
 controlnet_aux==0.0.9
+
+# NOTE: timm is deliberately NOT pinned here. transformers >= 4.49 needs
+# timm >= 1.0 (it imports timm.data.ImageNetInfo via its timm_wrapper model),
+# but controlnet_aux 0.0.9 declares timm<=0.6.7. Pinning both in this file makes
+# pip fail with ResolutionImpossible, so scripts/install_specialists.sh upgrades
+# timm to 1.0.15 afterwards. That controlnet_aux pin is stale -- the detectors
+# Olympus uses (OpenPose, DWPose, NormalBAE, PidiNet) are verified on 1.0.15.
 
 # video I/O
 imageio[ffmpeg]

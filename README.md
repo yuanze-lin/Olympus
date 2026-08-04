@@ -271,12 +271,15 @@ Which model produced each artifact is recorded per step in `manifest.json`.
 
 #### Before you upgrade dependencies
 
-`requirements_tools.txt` pins a deliberately narrow version window (notably
-`transformers==4.49.0` and `timm==1.0.15`); the reasoning is documented inline in
-that file. The important one: on `transformers >= 4.50` older releases of this
-repo failed *silently* — the router still produced fluent text but emitted no
-routing tokens. That is fixed here, but if you change versions, always re-check
-that `predict.py` still reproduces the routing tokens shown above.
+`requirements_tools.txt` pins a deliberately narrow window — `transformers` must
+be **>= 4.50 and < 5.0** (verified on 4.57.6). Older releases are too old for
+Qwen-Image's text encoder, and 5.x drops an API the router's vision tower needs;
+the details are documented inline in that file.
+
+Note that on `transformers >= 4.50` the router previously failed *silently* — it
+still produced fluent text but emitted no routing tokens at all. That is fixed
+here, but if you change any pin, always re-check that `predict.py` still
+reproduces the routing tokens shown above.
 
 Verify an install with:
 

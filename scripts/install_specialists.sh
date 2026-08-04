@@ -12,6 +12,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 THIRD_PARTY="$ROOT/third_party"
 mkdir -p "$THIRD_PARTY"
 
+# transformers >= 4.49 imports timm.data.ImageNetInfo (added in timm 1.0) via its
+# timm_wrapper model; without it <image_ground> and the InstructIR tokens fail to
+# import. controlnet_aux 0.0.9 declares timm<=0.6.7, so the two cannot be pinned
+# in the same requirements file -- pip errors with ResolutionImpossible. That pin
+# is stale, so upgrade timm here, after controlnet_aux is already installed.
+echo "[deps] upgrading timm to 1.0.15 (overrides controlnet_aux's stale pin)"
+pip install -q "timm==1.0.15" 2>&1 | grep -v "dependency resolver" || true
+
 clone() {  # clone <url> <dir> [ref]
   local url="$1" dir="$2" ref="${3:-}"
   if [ -d "$THIRD_PARTY/$dir/.git" ]; then
