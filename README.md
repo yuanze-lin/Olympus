@@ -146,8 +146,17 @@ It will save the ```Mipha-3B``` model under the ```ckpts``` folder.
 
 ## :rocket: Inference <a href="#specialists" id="specialists"/>
 
-One instruction in, finished assets out. Olympus routes it, calls the specialists,
-and chains them automatically.
+A single instruction becomes finished files. Olympus parses it into routing
+tokens, dispatches each to its specialist, and resolves the dependencies between
+them, so no step has to be wired up by hand.
+
+<div align="center">
+
+`prompt` &nbsp;→&nbsp; **router** &nbsp;→&nbsp; routing tokens &nbsp;→&nbsp; **specialists** &nbsp;→&nbsp; `.png` `.mp4` `.glb`
+
+</div>
+
+### Quick start
 
 ```
 python run_tools.py \
@@ -157,6 +166,21 @@ Next, would it be possible to change the cat's color to white? This change will 
 In the following step, produce a high-resolution 3D model based on the modified image. \
 At the next point, please show a video of a cat and a dog running on a playground." \
   --model-path ckpts/Olympus --output-dir outputs/cat
+```
+
+The plan is printed before anything loads. `<- step N` is a resolved dependency:
+the edit runs on the generated image, and the mesh is built from the edited one.
+
+```
+Execution plan:
+  [0] <image_gen> via qwen_image
+        "a fluffy orange cat lounging on a windowsill, ..."
+  [1] <image_edit> via qwen_image_edit  <- step 0
+        "change the cat's color to white."
+  [2] <3D_gen_image> via trellis2  <- step 1
+        "produce a high-resolution 3D model based on the modified image."
+  [3] <video_gen> via wan_video
+        "a cat and a dog running on a playground."
 ```
 
 ```
@@ -171,18 +195,32 @@ outputs/cat/
 └── manifest.json                # model, timing and inputs per step
 ```
 
-Dependencies between steps are resolved for you: the edit runs on the generated
-image, and the 3D model is built from the edited image.
+Measured on a single 48 GB GPU:
 
-Weights stream from the Hub on first use, ~200 GB if you exercise every token, so
-set `HF_HOME` to a large disk. `python scripts/prefetch_specialists.py`
-pre-downloads everything.
+| Step | Specialist | Time |
+|:--|:--|--:|
+| `<image_gen>` | Qwen-Image | 131 s |
+| `<image_edit>` | Qwen-Image-Edit-2509 | 188 s |
+| `<3D_gen_image>` | TRELLIS.2-4B | 245 s |
+| `<video_gen>` | Wan2.2-TI2V-5B | 192 s |
 
-Timings for the four steps above on one 48 GB GPU: 131 s image, 188 s edit,
-245 s 3D, 192 s video.
+Specialists load one at a time and each is freed before the next, so peak memory
+is roughly a single model rather than the sum. A step that fails is recorded in
+`manifest.json` and the rest still run.
+
+### Working from your own image
+
+Tasks that analyse or edit an image take one directly:
+
+```
+python run_tools.py --prompt "Segment everything in this photo, then estimate its depth map." \
+  --input-image assets/room.jpg --output-dir outputs/room
+```
+
+### Options
 
 | Flag | Purpose |
-|---|---|
+|:--|:--|
 | `--dry-run` | print the plan, no GPU needed |
 | `--list-tokens` | all 30 tokens and their backends |
 | `--input-image path.png` | seed image for edit/analysis tasks |
@@ -192,21 +230,14 @@ Timings for the four steps above on one 48 GB GPU: 131 s image, 188 s edit,
 | `--backend-model image_gen=<hf-id>` | swap a single checkpoint |
 | `--step-option video_gen.num_frames=25` | per-token knobs |
 
-Tasks that need an image work the same way:
+Weights stream from the Hub on first use, ~200 GB across every token, so set
+`HF_HOME` to a large disk. `python scripts/prefetch_specialists.py` fetches them
+ahead of time, and `python scripts/smoke_test_tokens.py --fast` exercises all 30
+tokens to verify an install.
 
-```
-python run_tools.py --prompt "Segment everything in this photo, then estimate its depth map." \
-  --input-image assets/room.jpg --output-dir outputs/room
-```
+All 30 tokens, their specialists, the 3D fallbacks, licensing and dependency pins
+are listed in [docs/SPECIALISTS.md](docs/SPECIALISTS.md).
 
-See [docs/SPECIALISTS.md](docs/SPECIALISTS.md) for all 30 tokens and their models,
-the 3D fallbacks, licensing and dependency pins.
-
-Verify an install with:
-
-```
-python scripts/smoke_test_tokens.py --fast   # runs every token
-```
 
 ## :books: Training <a href="#training" id="training"/>
 
