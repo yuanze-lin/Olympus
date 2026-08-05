@@ -1,36 +1,48 @@
-<p align="center"><img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="icon" width="150" height="150" style="vertical-align:middle; margin-right:5px;" /></p>
+<div align="center">
 
-# Olympus: A Universal Task Router for Computer Vision Tasks (CVPR 2025, Highlight) <br/>
+<img src="https://github.com/yuanze-lin/Olympus/blob/main/asset/olympus.png" alt="Olympus" width="130" height="130" />
+
+# Olympus: A Universal Task Router for Computer Vision Tasks
+
+**CVPR 2025 (Highlight)**
 
 [![PDF](https://img.shields.io/badge/PDF-Download-orange?style=flat-square&logo=adobeacrobatreader&logoColor=white)](https://arxiv.org/pdf/2412.09612)
-[![arXiv](https://img.shields.io/badge/arXiv-2412.09612-b31b1b.svg)](https://arxiv.org/abs/2412.09612)
+[![arXiv](https://img.shields.io/badge/arXiv-2412.09612-b31b1b.svg?style=flat-square)](https://arxiv.org/abs/2412.09612)
 [![Project Page](https://img.shields.io/badge/Project%20Page-Visit%20Now-0078D4?style=flat-square&logo=googlechrome&logoColor=white)](https://yuanze-lin.me/Olympus_page/)
-[![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-FFD21E)](https://huggingface.co/Yuanze/Olympus)
-[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-FFD21E)](https://huggingface.co/datasets/Yuanze/Olympus)
-[![YouTube Video](https://img.shields.io/badge/YouTube%20Video-FF0000?style=flat-square&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=N1xOdIrVvn4)
+[![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-FFD21E?style=flat-square)](https://huggingface.co/Yuanze/Olympus)
+[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-FFD21E?style=flat-square)](https://huggingface.co/datasets/Yuanze/Olympus)
+[![YouTube](https://img.shields.io/badge/YouTube%20Video-FF0000?style=flat-square&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=N1xOdIrVvn4)
 
-Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks" 
+[Yuanze Lin](https://yuanze-lin.me/) &nbsp;·&nbsp; [Yunsheng Li](https://scholar.google.com/citations?user=hJrIyCwAAAAJ&hl=en) &nbsp;·&nbsp; [Dongdong Chen](https://www.dongdongchen.bid/) &nbsp;·&nbsp; [Weijian Xu](https://weijianxu.com/) &nbsp;·&nbsp; [Ronald Clark](https://www.ron-clark.com/) &nbsp;·&nbsp; [Philip H. S. Torr](https://eng.ox.ac.uk/people/philip-torr/)
 
-[Yuanze Lin](https://yuanze-lin.me/), [Yunsheng Li](https://scholar.google.com/citations?user=hJrIyCwAAAAJ&hl=en), [Dongdong Chen](https://www.dongdongchen.bid/), [Weijian Xu](https://weijianxu.com/), [Ronald Clark](https://www.ron-clark.com/), [Philip H. S. Torr](https://eng.ox.ac.uk/people/philip-torr/)
+[**Installation**](#install) &nbsp;·&nbsp; [**Models & Data**](#data) &nbsp;·&nbsp; [**Inference**](#specialists) &nbsp;·&nbsp; [**Training**](#training) &nbsp;·&nbsp; [**Evaluation**](#evaluation) &nbsp;·&nbsp; [**Citation**](#citation)
+
+</div>
+
+Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks".
+
+Olympus routes a single natural-language instruction across **20 vision tasks**,
+dispatches each to a specialist model, and chains their outputs. One prompt in,
+finished `.png`, `.mp4` and `.glb` files out.
 
 **:hearts: If you find our project is helpful for your research, please kindly give us a :star2: and cite our paper :bookmark_tabs:   : )**
 
-## :mega:  News
+## :mega: News
+
+- [x] **Prompt to output.** A single instruction now returns finished assets, `.png` / `.mp4` / `.glb`, rather than routing tokens alone ([#1](https://github.com/yuanze-lin/Olympus/issues/1)).
 - [x] Release the code for integration with task-specific models.
 - [x] Release the training & inference code.
 - [x] Release Olympus datasets.
 - [x] Release the model of Olympus.
 
-
-## :low_brightness: Overview 
+## :low_brightness: Overview
 
 ![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/overview.png)
 
-  
-## Getting Started
+## :hammer_and_wrench: Installation <a href="#install" id="install"/>
 
-### :hammer_and_wrench: Environment Installation <a href="#install" id="install"/>
 To establish the environment, just run this code in the shell:
+
 ```
 git clone https://github.com/yuanze-lin/Olympus.git
 cd Olympus
@@ -38,28 +50,34 @@ conda create -n olympus python==3.10 -y
 conda activate olympus
 pip install -r requirements.txt
 ```
+
 That will create the environment ```olympus``` we used.
 
 That is all you need to run the router on its own. To also **execute** the routed
 tasks and generate real images, videos and 3D models with
 [`run_tools.py`](#specialists), install the specialist stack into the *same*
 environment:
+
 ```
 pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements_tools.txt
 bash scripts/install_specialists.sh
 ```
-The router and every specialist share this one environment; there is no
-per-tool environment to manage.
 
-**3D backends.** `<3D_gen_image>` uses
-[TRELLIS.2-4B](https://huggingface.co/microsoft/TRELLIS.2-4B) and `<3D_gen_text>`
-uses [TRELLIS-text-base](https://huggingface.co/microsoft/TRELLIS-text-base), both
-producing textured meshes with PBR materials. They compile several CUDA
+The router and every specialist share this one environment; there is no per-tool
+environment to manage.
+
+### 3D backends
+
+`<3D_gen_image>` uses [TRELLIS.2-4B](https://huggingface.co/microsoft/TRELLIS.2-4B)
+and `<3D_gen_text>` uses [TRELLIS-text-base](https://huggingface.co/microsoft/TRELLIS-text-base),
+both producing textured meshes with PBR materials. They compile several CUDA
 extensions, so they install separately:
+
 ```
 bash scripts/install_3d.sh
 ```
+
 That builds both, plus Hunyuan3D-2 as an ungated fallback for `<3D_gen_image>`.
 Each step is independent, so a failure in one does not block the others, and any
 3D token whose backend is missing falls back automatically rather than erroring.
@@ -82,7 +100,8 @@ See the [3D fallbacks](docs/SPECIALISTS.md#3d-fallbacks).
 > The Hub call is tried first; these apply only if it fails. Or skip TRELLIS.2 and
 > let `<3D_gen_image>` fall back to Hunyuan3D-2, which is ungated.
 
-### Download Models & Data ###
+## :floppy_disk: Models & Data <a href="#data" id="data"/>
+
 We share our collected Olympus dataset as follows:
 
 | Instruction    | Link |
@@ -93,36 +112,42 @@ We share our collected Olympus dataset as follows:
 - ```Olympus_dataset```: There are 20 JSON files under ```20 individual tasks``` folder, each corresponding to a specific task. You can refer to the routing token definitions in our paper to identify the task associated with each JSON file, along with the chain-of-action data provided in ```coa.json```. Each of these 21 JSON files includes both training and test data. ```OlympusInstruct.json``` and ```OlympusBench.json``` contain the collected OlympusInstruct and OlympusBench datasets, respectively.
 - ```Olympus.json```: The final instruction data for fine-tuning.
 
+**(1) Download the Olympus model:**
 
-(1) Download the Olympus model:
 ```
 python download_olympus.py
 ```
+
 It will save the ```Olympus``` model under the ```ckpts``` folder.
 
-(2) Download the Olympus data for fine-tuning:
+**(2) Download the Olympus data for fine-tuning:**
+
 ```
 python download_olympus_dataset.py
 ```
+
 It saves the fine-tuning instruction data ```Olympus.json``` to the ```train_data``` folder, while all other JSON files are stored in the newly created ```jsons``` folder. Note that ```Olympus.json``` is a combination of ```llava_v1_5_mix665k.json``` and OlympusInstruct, our collected instruction data covering 20 tasks.
 
-**If you want to merge the data manually, download [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) into the ```jsons``` folder, then run the merge script:**
+If you want to merge the data manually, download [llava_v1_5_mix665k.json](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) into the ```jsons``` folder, then run the merge script:
 
 ```
 python scripts/merge_data.py
 ```
+
 You can specify which tasks to merge by referring to the script ```scripts/merge_tasks.py```.
 
-(3) Download the Mipha-3B model for fine-tuning:
+**(3) Download the Mipha-3B model for fine-tuning:**
+
 ```
 python download_mipha_3b.py
 ```
+
 It will save the ```Mipha-3B``` model under the ```ckpts``` folder.
 
-### :rocket: Inference <a href="#specialists" id="specialists"/>
+## :rocket: Inference <a href="#specialists" id="specialists"/>
 
 One instruction in, finished assets out. Olympus routes it, calls the specialists,
-and chains them automatically ([#1](https://github.com/yuanze-lin/Olympus/issues/1)).
+and chains them automatically.
 
 ```
 python run_tools.py \
@@ -183,19 +208,19 @@ Verify an install with:
 python scripts/smoke_test_tokens.py --fast   # runs every token
 ```
 
+## :books: Training <a href="#training" id="training"/>
 
-### Visual Instruction Tuning
 Please refer [here](https://github.com/haotian-liu/LLaVA/blob/9a26bd1435b4ac42c282757f2c16d34226575e96/README.md#visual-instruction-tuning) to prepare the instruction tuning data. Especially, store the images from different datasets under ```train_data``` folder.
 
-Run the following code to fine-tune the model: 
+Run the following code to fine-tune the model:
+
 ```
 bash scripts/mipha/finetune.sh
 ```
 
-### Evaluation
-To evaluate the model's performance on different benchmarks:
+## :bar_chart: Evaluation <a href="#evaluation" id="evaluation"/>
 
-See [Evaluation.md](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
+To evaluate the model's performance on different benchmarks, see [Evaluation.md](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
 Please place the evaluation data under the ```eval``` folder. The evaluation scripts are placed under ```scripts/mipha/eval/```.
 For example, to test the model's performance on VQAv2 dataset, simply run:
@@ -204,16 +229,15 @@ For example, to test the model's performance on VQAv2 dataset, simply run:
 bash scripts/mipha/eval/vqav2.sh
 ```
 
-## :crystal_ball: Suppored Capacities (Covering 20 tasks)
+## :crystal_ball: Supported Capacities (Covering 20 tasks)
 
 ![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/capacities.png)
-
 
 ## :snowboarder: Diverse Applications
 
 ![image](https://github.com/yuanze-lin/Olympus/blob/main/asset/application.png)
 
-## Citation
+## :bookmark_tabs: Citation <a href="#citation" id="citation"/>
 
 If you find Olympus useful for your research and applications, please cite using this BibTeX:
 
@@ -226,7 +250,8 @@ If you find Olympus useful for your research and applications, please cite using
 }
 ```
 
-## Acknowledgement
+## :pray: Acknowledgement
+
 Our project is built upon the following foundations:
 
 - [Mipha](https://github.com/xmoanvaf/llava-phi): An impressive open-source project for lightweight vision-language assistants
