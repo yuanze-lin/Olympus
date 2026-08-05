@@ -27,7 +27,7 @@ finished `.png`, `.mp4` and `.glb` files out.
 
 ## :mega: News
 
-- [x] **Prompt to assets.** A single instruction now returns finished assets, `.png` / `.mp4` / `.glb`.
+- [x] **Prompt-to-Assets** A single instruction now returns finished assets, `.png` / `.mp4` / `.glb`.
 - [x] Release the code for integration with task-specific models.
 - [x] Release the training & inference code.
 - [x] Release Olympus datasets.
