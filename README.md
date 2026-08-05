@@ -199,10 +199,10 @@ Measured on a single 48 GB GPU:
 
 | Step | Specialist | Time |
 |:--|:--|--:|
-| `<image_gen>` | Qwen-Image | 131 s |
-| `<image_edit>` | Qwen-Image-Edit-2509 | 188 s |
-| `<3D_gen_image>` | TRELLIS.2-4B | 245 s |
-| `<video_gen>` | Wan2.2-TI2V-5B | 192 s |
+| `<image_gen>` | Qwen-Image | 125 s |
+| `<image_edit>` | Qwen-Image-Edit-2509 | 184 s |
+| `<3D_gen_image>` | TRELLIS.2-4B | 296 s |
+| `<video_gen>` | Wan2.2-TI2V-5B | 190 s |
 
 Specialists load one at a time and each is freed before the next, so peak memory
 is roughly a single model rather than the sum. A step that fails is recorded in
