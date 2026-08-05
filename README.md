@@ -29,7 +29,7 @@ finished `.png`, `.mp4` and `.glb` files out.
 
 ## :mega: News
 
-- [x] **Prompt to output.** A single instruction now returns finished assets, `.png` / `.mp4` / `.glb`, rather than routing tokens alone ([#1](https://github.com/yuanze-lin/Olympus/issues/1)).
+- [x] **Prompt to output.** A single instruction now returns finished assets, `.png` / `.mp4` / `.glb`.
 - [x] Release the code for integration with task-specific models.
 - [x] Release the training & inference code.
 - [x] Release Olympus datasets.
