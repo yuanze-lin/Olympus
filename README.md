@@ -150,11 +150,9 @@ A single instruction becomes finished files. Olympus parses it into routing
 tokens, dispatches each to its specialist, and resolves the dependencies between
 them, so no step has to be wired up by hand.
 
-<div align="center">
-
-`prompt` &nbsp;→&nbsp; **router** &nbsp;→&nbsp; routing tokens &nbsp;→&nbsp; **specialists** &nbsp;→&nbsp; `.png` `.mp4` `.glb`
-
-</div>
+<p align="center">
+  <img src="asset/pipeline.svg" alt="prompt to router to routing tokens to specialists to assets" width="100%"/>
+</p>
 
 ### Quick start
 
@@ -186,7 +184,7 @@ Execution plan:
 ```
 outputs/cat/
 ├── step0_image_gen.png          # Qwen-Image
-├── step1_image_edit.png         # Qwen-Image-Edit-2509, edits step 0
+├── step1_image_edit.png         # Qwen-Image-Edit-2511, edits step 0
 ├── step2_3D_gen_image.glb       # TRELLIS.2-4B, built from step 1
 ├── step2_3D_gen_image.mp4       # turntable render of the mesh
 ├── step2_3D_gen_image_pbr.mp4   # same turntable, PBR channels tiled
@@ -200,7 +198,7 @@ Measured on a single 48 GB GPU:
 | Step | Specialist | Time |
 |:--|:--|--:|
 | `<image_gen>` | Qwen-Image | 125 s |
-| `<image_edit>` | Qwen-Image-Edit-2509 | 184 s |
+| `<image_edit>` | Qwen-Image-Edit-2511 | 182 s |
 | `<3D_gen_image>` | TRELLIS.2-4B | 296 s |
 | `<video_gen>` | Wan2.2-TI2V-5B | 190 s |
 
