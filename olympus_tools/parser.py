@@ -37,9 +37,6 @@ class Step:
     prompt: str
     consumes: str
     produces: str
-    #: specialist named in Table 9; kept in memory for --list-tokens and
-    #: --legacy-backends, but deliberately not serialised into plan.json
-    paper_model: str = ""
     condition: Optional[str] = None
     # Where this step's input artifact comes from: ``"user"``, ``None`` (needs
     # nothing) or the index of an earlier step whose output feeds this one.
@@ -71,8 +68,7 @@ class Plan:
                 "raw_output": self.raw_output,
                 "direct_answer": self.direct_answer,
                 "unknown_tokens": self.unknown_tokens,
-                "steps": [{k: v for k, v in asdict(s).items()
-                           if k != "paper_model"} for s in self.steps],
+                "steps": [asdict(s) for s in self.steps],
             },
             indent=indent,
             ensure_ascii=False,
@@ -81,13 +77,9 @@ class Plan:
     @classmethod
     def from_json(cls, text: str) -> "Plan":
         blob = json.loads(text)
-        steps = [Step(**s) for s in blob.get("steps", [])]
-        for step in steps:  # repopulate from the token table
-            if not step.paper_model:
-                try:
-                    step.paper_model = get_spec(step.token).paper_model
-                except Exception:
-                    pass
+        # Tolerate plans written before paper_model was dropped.
+        steps = [Step(**{k: v for k, v in s.items() if k != "paper_model"})
+                 for s in blob.get("steps", [])]
         return cls(
             steps=steps,
             direct_answer=blob.get("direct_answer", ""),
@@ -149,7 +141,6 @@ def parse(router_output: str, instruction: str = "") -> Plan:
             token=spec.token,
             task=spec.task,
             backend=spec.backend,
-            paper_model=spec.paper_model,
             prompt=payload,
             consumes=spec.consumes,
             produces=spec.produces,
@@ -169,7 +160,6 @@ def parse(router_output: str, instruction: str = "") -> Plan:
                 token=spec.token,
                 task=spec.task,
                 backend=spec.backend,
-                paper_model=spec.paper_model,
                 prompt=payload,
                 consumes=spec.consumes,
                 produces=spec.produces,

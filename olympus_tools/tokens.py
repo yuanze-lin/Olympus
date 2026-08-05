@@ -6,8 +6,7 @@ executes it, and (c) its dataflow signature -- what artifact it consumes and wha
 it produces.
 
 The token set follows Figure 8 of the paper (20 tasks; 18 base tokens plus six
-controllable-image and six controllable-video condition tokens = 30 tokens), and
-the ``paper_model`` field records the specialist named in Table 9.
+controllable-image and six controllable-video condition tokens = 30 tokens).
 
 Note on ``<image_denoise>``: Figure 8 prints this as ``<image_denosie>``, but the
 released OlympusInstruct data (``image_denoise.json``) uses ``<image_denoise>``,
@@ -32,7 +31,6 @@ class TaskSpec:
     token: str  # bare token name, e.g. "image_gen" for <image_gen>
     task: str  # human-readable task name
     backend: str  # backend id resolved through olympus_tools.registry
-    paper_model: str  # specialist named in Table 9 of the paper
     consumes: str = NONE  # artifact this task needs as input
     produces: str = IMAGE  # artifact this task emits
     aliases: tuple = field(default=())  # alternate spellings seen in the wild
@@ -52,45 +50,45 @@ CONTROL_CONDITIONS = ("pose", "canny", "depth", "normal", "seg", "scrib")
 
 _BASE_TASKS: List[TaskSpec] = [
     # ---- image generation / editing -------------------------------------
-    TaskSpec("image_gen", "Image Generation", "qwen_image", "Stable Diffusion XL",
+    TaskSpec("image_gen", "Image Generation", "qwen_image",
              consumes=NONE, produces=IMAGE),
-    TaskSpec("image_edit", "Image Editing", "qwen_image_edit", "InstructPix2Pix",
+    TaskSpec("image_edit", "Image Editing", "qwen_image_edit",
              consumes=IMAGE, produces=IMAGE),
     # ---- image restoration ----------------------------------------------
-    TaskSpec("image_deblur", "Image Deblurring", "instructir", "InstructIR",
+    TaskSpec("image_deblur", "Image Deblurring", "instructir",
              consumes=IMAGE, produces=IMAGE),
-    TaskSpec("image_denoise", "Image Denoising", "instructir", "InstructIR",
+    TaskSpec("image_denoise", "Image Denoising", "instructir",
              consumes=IMAGE, produces=IMAGE, aliases=("image_denosie",)),
-    TaskSpec("image_derain", "Image Deraining", "instructir", "InstructIR",
+    TaskSpec("image_derain", "Image Deraining", "instructir",
              consumes=IMAGE, produces=IMAGE),
-    TaskSpec("image_sr", "Image Super-Resolution", "swin2sr", "Swin2SR",
+    TaskSpec("image_sr", "Image Super-Resolution", "swin2sr",
              consumes=IMAGE, produces=IMAGE),
     # ---- image perception ------------------------------------------------
-    TaskSpec("image_det", "Object Detection", "detection", "Co-DETR",
+    TaskSpec("image_det", "Object Detection", "detection",
              consumes=IMAGE, produces=ANNOTATION),
-    TaskSpec("image_seg", "Object Segmentation", "segformer", "SegFormer",
+    TaskSpec("image_seg", "Object Segmentation", "segformer",
              consumes=IMAGE, produces=ANNOTATION),
-    TaskSpec("image_ground", "Visual Grounding", "grounding_dino", "GroundingDINO",
+    TaskSpec("image_ground", "Visual Grounding", "grounding_dino",
              consumes=IMAGE, produces=ANNOTATION),
-    TaskSpec("image_depth", "Depth Estimation", "depth_anything_v3", "Depth Anything V2",
+    TaskSpec("image_depth", "Depth Estimation", "depth_anything_v3",
              consumes=IMAGE, produces=IMAGE),
-    TaskSpec("image_normal", "Normal Estimation", "normal", "Sapiens",
+    TaskSpec("image_normal", "Normal Estimation", "normal",
              consumes=IMAGE, produces=IMAGE),
-    TaskSpec("image_canny", "Canny Estimation", "canny", "OpenCV Canny Operator",
+    TaskSpec("image_canny", "Canny Estimation", "canny",
              consumes=IMAGE, produces=IMAGE),
-    TaskSpec("image_pose", "Pose Estimation", "dwpose", "DWPose",
+    TaskSpec("image_pose", "Pose Estimation", "dwpose",
              consumes=IMAGE, produces=IMAGE),
     # ---- video ------------------------------------------------------------
-    TaskSpec("video_gen", "Video Generation", "wan_video", "CogVideoX",
+    TaskSpec("video_gen", "Video Generation", "wan_video",
              consumes=NONE, produces=VIDEO),
-    TaskSpec("video_edit", "Video Editing", "kiwi_edit", "Text2Video-Zero",
+    TaskSpec("video_edit", "Video Editing", "kiwi_edit",
              consumes=VIDEO, produces=VIDEO),
-    TaskSpec("video_ref_seg", "Referring Video Object Segmentation", "rvos", "GLEE",
+    TaskSpec("video_ref_seg", "Referring Video Object Segmentation", "rvos",
              consumes=VIDEO, produces=VIDEO),
     # ---- 3D ---------------------------------------------------------------
-    TaskSpec("3D_gen_text", "Text-to-3D Generation", "trellis_text", "LGM",
+    TaskSpec("3D_gen_text", "Text-to-3D Generation", "trellis_text",
              consumes=NONE, produces=MESH),
-    TaskSpec("3D_gen_image", "Image-to-3D Generation", "trellis2", "Wonder3D",
+    TaskSpec("3D_gen_image", "Image-to-3D Generation", "trellis2",
              consumes=IMAGE, produces=MESH),
 ]
 
@@ -101,12 +99,12 @@ def _controllable_tasks() -> List[TaskSpec]:
     for cond in CONTROL_CONDITIONS:
         out.append(TaskSpec(
             f"{cond}_to_image", f"Controllable Image Generation ({cond})",
-            "controlnet", "ControlNet",
+            "controlnet",
             consumes=IMAGE, produces=IMAGE, condition=cond,
         ))
         out.append(TaskSpec(
             f"{cond}_to_video", f"Controllable Video Generation ({cond})",
-            "t2v_zero_control", "Text2Video-Zero",
+            "t2v_zero_control",
             consumes=IMAGE, produces=VIDEO, condition=cond,
         ))
     return out

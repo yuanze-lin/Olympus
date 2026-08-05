@@ -156,7 +156,7 @@ def main():
 
         print(f"{'ROUTING TOKEN':<22} {'TASK':<42} {'BACKEND':<20} PAPER (Table 9)")
         for spec in ALL_TASKS:
-            print(f"{spec.open_tag:<22} {spec.task:<42} {spec.backend:<20} {spec.paper_model}")
+            print(f"{spec.open_tag:<22} {spec.task:<42} {spec.backend}")
         return
 
     if not (args.prompt or args.plan or args.router_output):
