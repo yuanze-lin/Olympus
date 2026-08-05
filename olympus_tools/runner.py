@@ -81,10 +81,21 @@ class Runner:
         results: Dict[int, dict] = {}
         manifest = {
             "instruction": plan.instruction,
-            "router_output": plan.raw_output,
+            "routed_output": plan.routed_output,
             "direct_answer": plan.direct_answer,
             "steps": [],
         }
+        path = os.path.join(self.output_dir, "manifest.json")
+
+        def _flush():
+            """Persist after every step.
+
+            A long run can be interrupted, and a manifest written only at the end
+            would leave the artifacts already on disk with no record of what
+            produced them.
+            """
+            with open(path, "w") as fh:
+                json.dump(manifest, fh, indent=2, ensure_ascii=False)
 
         for step in plan.steps:
             stem = os.path.join(self.output_dir, f"step{step.index}_{step.token}")
@@ -130,10 +141,9 @@ class Runner:
                 results[step.index] = {"error": str(exc), "_token": step.token}
                 print(f"  [{step.index}] <{step.token}> FAILED: {exc}")
             manifest["steps"].append(entry)
+            _flush()
 
-        path = os.path.join(self.output_dir, "manifest.json")
-        with open(path, "w") as fh:
-            json.dump(manifest, fh, indent=2, ensure_ascii=False)
+        _flush()
         manifest["manifest_path"] = path
         return manifest
 

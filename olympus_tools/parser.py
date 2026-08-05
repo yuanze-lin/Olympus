@@ -53,7 +53,7 @@ class Plan:
 
     steps: List[Step]
     direct_answer: str = ""   # prose the router emitted outside any routing token
-    raw_output: str = ""
+    routed_output: str = ""
     instruction: str = ""
     unknown_tokens: List[str] = None
 
@@ -65,7 +65,7 @@ class Plan:
         return json.dumps(
             {
                 "instruction": self.instruction,
-                "raw_output": self.raw_output,
+                "routed_output": self.routed_output,
                 "direct_answer": self.direct_answer,
                 "unknown_tokens": self.unknown_tokens,
                 "steps": [asdict(s) for s in self.steps],
@@ -83,7 +83,8 @@ class Plan:
         return cls(
             steps=steps,
             direct_answer=blob.get("direct_answer", ""),
-            raw_output=blob.get("raw_output", ""),
+            # accept the pre-rename key so older plans still load
+            routed_output=blob.get("routed_output", blob.get("raw_output", "")),
             instruction=blob.get("instruction", ""),
             unknown_tokens=blob.get("unknown_tokens", []),
         )
@@ -176,5 +177,5 @@ def parse(router_output: str, instruction: str = "") -> Plan:
     direct = re.sub(r"\s+", " ", " ".join(leftover)).strip()
 
     _resolve_dataflow(steps)
-    return Plan(steps=steps, direct_answer=direct, raw_output=text,
+    return Plan(steps=steps, direct_answer=direct, routed_output=text,
                 instruction=instruction, unknown_tokens=unknown)

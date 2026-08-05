@@ -45,7 +45,7 @@ PROMPTS = {
     "image_normal": "estimate the surface normals",
     "image_canny": "extract the canny edges",
     "image_pose": "estimate the human pose",
-    "video_gen": "a cat and a dog running on a playground",
+    "video_gen": "a cat running through a sunlit forest",
     "video_edit": "make it look like a watercolour painting",
     "video_ref_seg": "the cat",
     "3D_gen_text": "a wooden rocking chair",

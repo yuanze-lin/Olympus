@@ -171,7 +171,7 @@ def main():
         print(f"Routing instruction through Olympus ({args.model_path}) ...")
         plan = route(args)
 
-    print("\nRouter output:\n ", plan.raw_output or "(none)")
+    print("\nRouter output:\n ", plan.routed_output or "(none)")
     if plan.direct_answer:
         print("\nDirect answer:\n ", plan.direct_answer)
     if plan.unknown_tokens:

@@ -160,7 +160,7 @@ python run_tools.py \
 with sunlight streaming through the glass and casting soft shadows to create a cozy atmosphere. \
 Next, would it be possible to change the cat's color to white? This change will make it more eye-catching. \
 In the following step, produce a high-resolution 3D model based on the modified image. \
-At the next point, please show a video of a cat and a dog running on a playground." \
+At the next point, please show a video of a cat running through a sunlit forest." \
   --model-path ckpts/Olympus --output-dir outputs/cat
 ```
 
@@ -176,7 +176,7 @@ Execution plan:
   [2] <3D_gen_image> via trellis2  <- step 1
         "produce a high-resolution 3D model based on the modified image."
   [3] <video_gen> via wan_video
-        "a cat and a dog running on a playground."
+        "a cat running through a sunlit forest."
 ```
 
 ```
@@ -195,10 +195,15 @@ Measured on a single 48 GB GPU:
 
 | Step | Specialist | Time |
 |:--|:--|--:|
-| `<image_gen>` | Qwen-Image | 125 s |
+| `<image_gen>` | Qwen-Image | 127 s |
 | `<image_edit>` | Qwen-Image-Edit-2511 | 182 s |
-| `<3D_gen_image>` | TRELLIS.2-4B | 296 s |
-| `<video_gen>` | Wan2.2-TI2V-5B | 190 s |
+| `<3D_gen_image>` | TRELLIS.2-4B | 150-880 s |
+| `<video_gen>` | Wan2.2-TI2V-5B | 187 s |
+
+The three generation steps are stable run to run. `<3D_gen_image>` is not: mesh
+extraction and remeshing run on CPU, so the time depends on the mesh and on what
+else the machine is doing. The range above is what we measured across four runs
+of the same input.
 
 Specialists load one at a time and each is freed before the next, so peak memory
 is roughly a single model rather than the sum. A step that fails is recorded in
