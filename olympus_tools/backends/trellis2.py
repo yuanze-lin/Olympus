@@ -183,7 +183,6 @@ class Trellis2Backend(Backend):
     """
 
     default_model_id = "microsoft/TRELLIS.2-4B"
-    substitution = "Wonder3D -> TRELLIS.2-4B"
 
     def load(self):
         repo = _trellis2_dir()
@@ -282,7 +281,6 @@ class TextTo3DViaImageBackend(Backend):
     """
 
     default_model_id = "microsoft/TRELLIS.2-4B"
-    substitution = "LGM -> Qwen-Image + TRELLIS.2-4B (text -> image -> 3D)"
 
     def load(self):
         # Sub-models are built lazily inside run() so only one is resident.

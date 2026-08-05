@@ -8,7 +8,7 @@ artifact is recorded per step in `manifest.json`.
 | Routing token | Task | Default | Paper (Table 9) |
 |---|---|---|---|
 | `<image_gen>` | Image Generation | **Qwen-Image** | Stable Diffusion XL |
-| `<image_edit>` | Image Editing | **Qwen-Image-Edit-2509** | InstructPix2Pix |
+| `<image_edit>` | Image Editing | **Qwen-Image-Edit-2511** | InstructPix2Pix |
 | `<video_gen>` | Video Generation | **Wan2.2-TI2V-5B** | CogVideoX |
 | `<video_edit>` | Video Editing | **Kiwi-Edit-5B-Instruct** | Text2Video-Zero |
 | `<image_depth>` | Depth Estimation | **Depth Anything 3** | Depth Anything V2 |
@@ -31,7 +31,7 @@ artifact is recorded per step in `manifest.json`.
 A 3D token whose backend is not installed downgrades instead of failing:
 `<3D_gen_image>` tries TRELLIS.2-4B, then Hunyuan3D-2, then Shap-E;
 `<3D_gen_text>` tries TRELLIS-text-base, then Shap-E. The chosen backend is
-printed at startup and recorded in `manifest.json` as `substitution`.
+printed at startup and recorded in `manifest.json` as `model`.
 
 ## Licensing
 

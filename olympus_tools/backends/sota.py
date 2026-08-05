@@ -8,7 +8,7 @@ re-selected with ``--backend-model`` or ``--legacy-backends``.
 | token           | SOTA default            | Table 9 original  |
 |-----------------|-------------------------|-------------------|
 | <image_gen>     | Qwen-Image              | Stable Diffusion XL |
-| <image_edit>    | Qwen-Image-Edit-2509    | InstructPix2Pix   |
+| <image_edit>    | Qwen-Image-Edit-2511    | InstructPix2Pix   |
 | <video_gen>     | Wan2.2-TI2V-5B          | CogVideoX         |
 | <video_edit>    | Kiwi-Edit-5B-Instruct   | Text2Video-Zero   |
 | <image_depth>   | Depth Anything 3        | Depth Anything V2 |
@@ -38,7 +38,6 @@ class QwenImageBackend(Backend):
     """
 
     default_model_id = "Qwen/Qwen-Image"
-    substitution = "Stable Diffusion XL -> Qwen-Image (SOTA open-weight T2I)"
 
     def load(self):
         from diffusers import DiffusionPipeline
@@ -67,14 +66,13 @@ class QwenImageBackend(Backend):
 
 @register("qwen_image_edit")
 class QwenImageEditBackend(Backend):
-    """<image_edit> -- Qwen-Image-Edit-2509.
+    """<image_edit> -- Qwen-Image-Edit-2511.
 
     Instruction-guided editing with far better identity/background preservation
     than InstructPix2Pix.
     """
 
-    default_model_id = "Qwen/Qwen-Image-Edit-2509"
-    substitution = "InstructPix2Pix -> Qwen-Image-Edit-2509"
+    default_model_id = "Qwen/Qwen-Image-Edit-2511"
 
     def load(self):
         from diffusers import DiffusionPipeline
@@ -121,7 +119,6 @@ class WanVideoBackend(Backend):
     """
 
     default_model_id = "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
-    substitution = "CogVideoX -> Wan2.2-TI2V-5B"
 
     def load(self):
         from diffusers import AutoencoderKLWan, WanPipeline
@@ -159,7 +156,6 @@ class KiwiEditBackend(Backend):
     """
 
     default_model_id = "linyq/kiwi-edit-5b-instruct-reference-diffusers"
-    substitution = "Text2Video-Zero -> Kiwi-Edit-5B-Instruct"
 
     def load(self):
         from diffusers import DiffusionPipeline
@@ -223,7 +219,6 @@ class DepthAnything3Backend(Backend):
     """
 
     default_model_id = "depth-anything/DA3MONO-LARGE"
-    substitution = "Depth Anything V2 -> Depth Anything 3 (CC-BY-NC-4.0)"
 
     def load(self):
         self._mode = None
@@ -246,7 +241,7 @@ class DepthAnything3Backend(Backend):
             device=0 if self.device.startswith("cuda") else -1,
         )
         self._mode = "v2"
-        self.substitution = "Depth Anything 3 package missing -> Depth Anything V2"
+        self.model_id = "depth-anything/Depth-Anything-V2-Small-hf"
 
     def run(self, prompt, input_path, out_stem, step=None, **kw):
         if not input_path:

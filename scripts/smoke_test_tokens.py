@@ -127,8 +127,7 @@ def main():
         opts = {token: FAST.get(token, {})} if args.fast else {}
         runner = Runner(out_dir, device=args.device, step_options=opts)
         t0 = time.time()
-        record = {"token": token, "paper_model": spec.paper_model,
-                  "backend": spec.backend}
+        record = {"token": token, "backend": spec.backend}
         try:
             manifest = runner.run(
                 plan,
@@ -139,7 +138,7 @@ def main():
             record["status"] = step["status"]
             record["outputs"] = step.get("outputs", {})
             record["error"] = step.get("error")
-            record["substitution"] = step.get("substitution")
+            record["model"] = step.get("model")
         except Exception as exc:
             record["status"] = "error"
             record["error"] = f"{type(exc).__name__}: {exc}"

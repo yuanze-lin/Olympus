@@ -21,7 +21,6 @@ class RVOSBackend(Backend):
     """<video_ref_seg> -- referring video object segmentation."""
 
     default_model_id = "IDEA-Research/grounding-dino-base"
-    substitution = "GLEE -> GroundingDINO + SAM (per-frame, no detectron2 build)"
 
     def load(self):
         from transformers import (AutoModelForZeroShotObjectDetection, AutoProcessor,

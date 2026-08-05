@@ -70,7 +70,6 @@ class Hunyuan3DBackend(Backend):
     """
 
     default_model_id = "tencent/Hunyuan3D-2"
-    substitution = "Wonder3D -> Hunyuan3D-2"
 
     def load(self):
         repo = _third_party("Hunyuan3D-2", "OLYMPUS_HUNYUAN3D_DIR")
@@ -147,7 +146,6 @@ class TrellisTextTo3DBackend(Backend):
     """
 
     default_model_id = "microsoft/TRELLIS-text-base"
-    substitution = "LGM -> TRELLIS-text-base"
 
     def load(self):
         repo = _third_party("TRELLIS", "OLYMPUS_TRELLIS_DIR")

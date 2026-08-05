@@ -116,7 +116,6 @@ class NormalBackend(Backend):
     makes ``<image_normal>`` -> ``<normal_to_image>`` chain correctly).
     """
 
-    substitution = "Sapiens -> NormalBAE (controlnet_aux)"
 
     def load(self):
         from ..conditions import _load
@@ -147,7 +146,7 @@ class DWPoseBackend(Backend):
 
             self.model = _load("pose")
             self._name = "OpenPose"
-            self.substitution = "DWPose unavailable -> OpenPose (controlnet_aux)"
+            self.model_id = "lllyasviel/Annotators"  # OpenPose weights
 
     def run(self, prompt, input_path, out_stem, step=None, **kw):
         if not input_path:
@@ -208,7 +207,6 @@ class DetectionBackend(Backend):
     """
 
     default_model_id = "facebook/detr-resnet-101"
-    substitution = "Co-DETR (mmdet) -> DETR (transformers)"
 
     def load(self):
         from transformers import AutoImageProcessor, AutoModelForObjectDetection

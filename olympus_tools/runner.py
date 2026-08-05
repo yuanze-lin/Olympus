@@ -94,7 +94,6 @@ class Runner:
                 "task": step.task,
                 "prompt": step.prompt,
                 "backend": step.backend,
-                "paper_model": step.paper_model,
                 "input_from": step.input_from,
             }
             try:
@@ -116,8 +115,10 @@ class Runner:
                 entry["outputs"] = {k: v for k, v in out.items()
                                     if isinstance(v, (str, int, float, list))}
                 entry["status"] = "ok"
-                if backend.substitution:
-                    entry["substitution"] = backend.substitution
+                # Record only the model that actually ran, so the manifest says
+                # what produced the artifact rather than what it replaced.
+                if backend.model_id:
+                    entry["model"] = backend.model_id
                 out["_token"] = step.token
                 results[step.index] = out
                 print(f"  [{step.index}] <{step.token}> -> "

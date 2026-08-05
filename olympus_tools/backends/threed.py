@@ -78,7 +78,6 @@ class TextTo3DBackend(_ShapEBase):
     """
 
     default_model_id = "openai/shap-e"
-    substitution = "LGM -> Shap-E (diffusers, no CUDA build required)"
 
     def load(self):
         from diffusers import ShapEPipeline
@@ -113,7 +112,6 @@ class ImageTo3DBackend(_ShapEBase):
     """
 
     default_model_id = "openai/shap-e-img2img"
-    substitution = "Wonder3D -> TripoSR if installed, else Shap-E img2img"
 
     def _triposr_dir(self):
         cand = os.environ.get("OLYMPUS_TRIPOSR_DIR")

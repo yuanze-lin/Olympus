@@ -40,8 +40,6 @@ class Backend:
     """
 
     backend_id = "base"
-    #: human-readable note recorded in the manifest when we deviate from Table 9
-    substitution: Optional[str] = None
 
     def __init__(self, device: str = "cuda", dtype: str = "fp16",
                  model_id: Optional[str] = None, **kwargs):
