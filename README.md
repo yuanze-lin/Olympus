@@ -19,8 +19,6 @@
 
 </div>
 
-Official implementation of "Olympus: A Universal Task Router for Computer Vision Tasks".
-
 Olympus routes a single natural-language instruction across **20 vision tasks**,
 dispatches each to a specialist model, and chains their outputs. One prompt in,
 finished `.png`, `.mp4` and `.glb` files out.
